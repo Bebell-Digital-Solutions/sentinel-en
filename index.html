@@ -97,20 +97,45 @@
         </header>
         
         <!-- Overview Section -->
-        <section id="overview" class="dashboard-section">
-            <div class="card">
-                <h2 class="text-3xl font-bold mb-4">Overview</h2>
-                <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life and private information.</p>
+<!-- Overview Section -->
+<section id="overview" class="dashboard-section">
+    <div class="card">
+        <h2 class="text-3xl font-bold mb-4">Overview</h2>
+        <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life and private information.</p>
+        
+        <!-- VIDEO CONTAINER (Responsive 1920x1080px ratio) -->
+        <div class="w-full aspect-video bg-black rounded-2xl shadow-lg mb-8 overflow-hidden relative" id="video-container">
+            <!-- Video Thumbnail -->
+            <div id="video-thumbnail" class="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-cover bg-center z-10">
+                <!-- Add your thumbnail image URL here -->
+                <div class="absolute inset-0 bg-black opacity-40"></div>
+                <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" 
+                     alt="Video thumbnail" 
+                     class="absolute inset-0 w-full h-full object-cover">
                 
-                <!-- VIDEO CONTAINER (Responsive 1920x1080px ratio) -->
-                <div class="w-full aspect-video bg-black rounded-2xl shadow-lg mb-8 overflow-hidden relative">                
-                    <video controls class="w-full h-full object-cover">
-                        <!-- Placeholder Video Source (Replace with your actual video file path) -->
-                        <source src="https://cdn.shopify.com/videos/c/o/v/949b837e16a142219bd10ebf655b6210.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                <!-- Play Button -->
+                <div class="relative z-20 bg-white/20 backdrop-blur-sm rounded-full p-4 hover:bg-white/30 transition-all duration-300 hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
                 </div>
+                
+                <!-- Optional: Video title overlay -->
+                <div class="absolute bottom-6 left-6 z-20 text-white">
+                    <h4 class="text-xl font-bold">Security Overview</h4>
+                    <p class="text-white/80">Click to play</p>
+                </div>
+            </div>
+            
+            <!-- Video Element (Hidden by default) -->
+            <video id="overview-video" controls class="w-full h-full object-cover hidden">
+                <!-- Placeholder Video Source (Replace with your actual video file path) -->
+                <source src="https://cdn.shopify.com/videos/c/o/v/949b837e16a142219bd10ebf655b6210.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
 
+        
                 <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
                 <p class="mb-4">This dashboard is your personal guide to improving your online privacy and security. It breaks down complex topics into simple, actionable steps you can take right now.</p>
 
