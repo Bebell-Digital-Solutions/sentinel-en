@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy and Security Dashboard</title>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN for basic utilities -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/bb6d550f9b7a6643eff984e7eb1c932ff997f664.png">
+    
+    <style>
+        /* --- Theme Variables (Dark Mode Only) --- */
+        :root {
+            --skin-color: #ff5011;        /* Primary Accent (Orange) */
+            --mirage-color: hsl(210, 10%, 23%);  /* Secondary/Dark Gray */
+            --title-color: hsl(242, 8%, 98%);    /* Near White */
+            --text-color: hsl(242, 8%, 80%);     /* Light Gray */
+            --body-color: #0d0d0d;               /* Almost Black Background */
+            --box-color: hsl(242, 14%, 12%);     /* Card Background */
+            
+            --primary: var(--skin-color);
+            --secondary: var(--mirage-color);
+            
+            --bg-body: var(--body-color);
+            --bg-card: var(--box-color);
+            --bg-input: hsl(242, 14%, 16%);
+            
+            --text-main: var(--title-color);
+            --text-muted: var(--text-color);
+            --text-inverse: #ffffff;
+            
+            --border: var(--mirage-color);
+            --accent: rgba(255, 80, 17, 0.15);   /* Semi-transparent Orange */
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 0.75rem;
+            --body-font: 'Inter', sans-serif;
+            
+            --chart-pending: #ef4444;
+            --chart-completed: #ff5011;
+
+            /* Swiper Scrollbar CSS - using general scrollbar variables */
+            --scroll-box-color: var(--mirage-color); /* Using mirage for scrollbar track */
+            --scroll-thumb-color: var(--skin-color); /* Using skin-color for scrollbar thumb */
+        }
+
+        /* --- Base Styles --- */
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bg-body);
+            color: var(--text-muted);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent body scroll, main content will scroll */
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            width: 280px; /* Fixed width */
+            flex-shrink: 0;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            overflow-y: auto; /* Scrollable sidebar if content overflows */
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            
+            /* Hide Scrollbar but keep functionality */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .main-content {
+            margin-left: 280px; /* Offset for fixed sidebar */
+            flex-grow: 1;
+            overflow-y: auto; /* Scrollable main content */
+            height: 100vh;
+            padding: 2rem;
+            background-color: var(--bg-body);
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth; /* Enable smooth scrolling */
+        }
+
+        /* --- Main Content Header (Progress Bar Area) --- */
+        .main-header {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* --- Components --- */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow);
+            border: 1px solid transparent;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255,255,255, 0.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--primary); /* Styles the checkbox itself */
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+        }
+
+        /* --- Custom Color Utilities --- */
+        /* Explicitly defining text-primary to ensure it works even if Tailwind config is missing */
+        .text-primary {
+            color: var(--primary) !important;
+        }
+        
+        .hover\:text-primary:hover {
+            color: var(--primary) !important;
+        }
+
+        .border-primary {
+            border-color: var(--primary) !important;
+        }
+
+        /* --- Navigation --- */
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius-sm);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 400;
+        }
+
+        .nav-item:hover {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            background-color: var(--accent);
+            color: var(--primary);
+            font-weight: 700;
+            border: 1px solid var(--primary);
+        }
+
+        .nav-icon {
+            color: var(--primary);
+        }
+
+        /* --- Progress Bar --- */
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-input);
+            border-radius: var(--border-radius-sm);
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary);
+            border-radius: var(--border-radius-sm);
+            transition: width 0.3s ease-in-out;
+        }
+
+        /* --- Tool Cards --- */
+        .tool-card {
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* --- Page Loader CSS STYLING --- */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--body-color); /* Using theme variable */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loader-header {
+            color: var(--title-color); /* Using theme variable */
+            font-size: 24px;
+            font-family: var(--body-font);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .progress {
+            width: 272.8px;
+            height: 41.7px;
+            border-radius: 28.8px;
+            color: var(--skin-color);
+            background-color: var(--box-color);
+            border: 2.9px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress::before {
+            content: "";
+            position: absolute;
+            margin: 2.9px;
+            inset: 0 100% 0 0;
+            border-radius: inherit;
+            background: currentColor;
+            animation: progress-pf82op 1.5s forwards;
+        }
+
+        @keyframes progress-pf82op {
+            100% {
+                inset: 0;
+            }
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Back to Top Button Styles --- */
+        #back-to-top {
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px;
+            width: 40px; 
+            height: 40px;
+            background: url('https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png') no-repeat center center;
+            background-size: cover;
+            border: none; 
+            border-radius: 50%;
+            cursor: pointer; 
+            opacity: 0; 
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            z-index: 999;
+        }
+        #back-to-top.show { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+        #back-to-top:hover { 
+            transform: scale(1.1); 
+        }
+
+        /* --- Logo Glow Effect --- */
+        .brand-logo-glow {
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 80, 17, 0.3) 0%,
+                rgba(255, 80, 17, 0.2) 30%,
+                rgba(255, 80, 17, 0.1) 50%,
+                rgba(255, 80, 17, 0.05) 70%,
+                transparent 100%
+            );
+            border-radius: 24px;
+            filter: blur(12px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* General scrollbar styling for main content */
+        .main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: var(--scroll-box-color);
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: var(--scroll-thumb-color);
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+        
+        
+        
+ .video-container-radius {
+    border-radius: 2rem; /* Adjust as needed */
+}       
+        
+        
+        
+
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Page Loader HTML -->
+    <!-- Loader Div is injected by the script below -->
+
+    <!-- Left Column: Fixed Navigation -->
+    <aside class="sidebar">
+        <div class="flex flex-col h-full">
+            <!-- Logo, Title, Subtitle -->
+            <div class="mb-8 text-center">
+                <div class="relative w-24 h-24 mx-auto mb-4">
+                    <img src="https://bucket.mlcdn.com/a/3336/3336910/images/bb6d550f9b7a6643eff984e7eb1c932ff997f664.png" alt="Dashboard Logo" class="w-full h-full object-contain relative z-10">
+                    <div class="brand-logo-glow absolute inset-0 -m-2"></div>
+                </div>
+                <h1 class="text-2xl font-extrabold text-text-main">Privacy & Security</h1>
+                <p class="text-sm text-text-muted">Your Guided Playbook</p>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-grow">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-section="overview">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 nav-icon"></i> Overview
+                    </li>
+                    <li class="nav-item" data-section="email-identity">
+                        <i data-lucide="at-sign" class="w-5 h-5 mr-3 nav-icon"></i> Email as Identity
+                    </li>
+                    <li class="nav-item" data-section="password-strategy">
+                        <i data-lucide="key-round" class="w-5 h-5 mr-3 nav-icon"></i> Password Strategy
+                    </li>
+                    <li class="nav-item" data-section="two-factor-protection">
+                        <i data-lucide="shield-check" class="w-5 h-5 mr-3 nav-icon"></i> Two Factor Protection
+                    </li>
+                    <li class="nav-item" data-section="scam-fraud-awareness">
+                        <i data-lucide="triangle-alert" class="w-5 h-5 mr-3 nav-icon"></i> Scam & Fraud
+                    </li>
+                    <li class="nav-item" data-section="inbox-account-cleanup">
+                        <i data-lucide="trash-2" class="w-5 h-5 mr-3 nav-icon"></i> Inbox Cleanup
+                    </li>
+                    <li class="nav-item" data-section="breach-detection">
+                        <i data-lucide="scan-eye" class="w-5 h-5 mr-3 nav-icon"></i> Breach Detection
+                    </li>
+                    <li class="nav-item" data-section="tracking-cookies-ads">
+                        <i data-lucide="cookie" class="w-5 h-5 mr-3 nav-icon"></i> Tracking & Ads
+                    </li>
+                    <li class="nav-item" data-section="reports-resources">
+                        <i data-lucide="file-text" class="w-5 h-5 mr-3 nav-icon"></i> Reports & Resources
+                    </li>
+                    
+                    
+                    
+                    <!-- New Demo Tool Buttons -->
+                 
+                    <li class="nav-item" data-section="demo-tool-1">
+                        <i data-lucide="shield" class="w-5 h-5 mr-3 nav-icon"></i> Privacy Coach
+                    </li>
+                    
+                    
+                    
+                    
+     <li class="nav-item" data-section="demo-tool-2">
+                        <i data-lucide="download" class="w-5 h-5 mr-3 nav-icon"></i> Download Guide
+                    </li>                  
+                    
+                    
+                </ul>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="mt-auto pt-8 pb-4 text-xs text-center text-text-muted border-t border-[var(--border)]">
+                <p>Developed by <span class="text-text-main font-semibold block mt-1">Bebell Digital Solutions</span></p>
+            </div>
+        </div>
+    </aside>
+
+
+
+
+
+
+
+
+
+    <!-- Right Column: Scrollable Content -->
+    <main class="main-content">
+        
+        <!-- MAIN HEADER (Progress Bar Location) -->
+        <header class="main-header">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-lg font-semibold text-text-main m-0">Your Progress</h3>
+                <p class="text-sm text-text-muted m-0" id="progressText">0% Complete (0/8 Sections)</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </header>
+        
+        
+        
+        
+        
+        
+
+        <!-- Overview Section -->
+        <section id="overview" class="dashboard-section">
+            <div class="card">
+                <h2 class="text-3xl font-bold mb-4">Overview</h2>
+                <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life and private information.</p>
+                
+                
+                
+                
+                
+                
+                
+
+                <!-- VIDEO CONTAINER (Responsive 1920x1080px ratio) -->
+                
+<div class="w-full aspect-video bg-black rounded-2xl shadow-lg mb-8 overflow-hidden relative">                
+                    <video controls class="w-full h-full object-cover">
+                        <!-- Placeholder Video Source (Replace with your actual video file path) -->
+                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+                <p class="mb-4">This dashboard is your personal guide to improving your online privacy and security. It breaks down complex topics into simple, actionable steps you can take right now.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+                <p class="mb-4">A guided playbook that helps you implement practical security measures through clear instructions and confirmed actions.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+                <p class="mb-4">In today's digital world, protecting your personal information and online accounts is crucial. Proactive steps can prevent identity theft, financial fraud, and privacy breaches.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+                <p class="mb-4">Without proper security, you risk losing access to your accounts, having your identity stolen, or your personal data being exposed. For example, a weak password could lead to your email being hacked, which then gives attackers access to your banking, social media, and other critical services. Unchecked tracking can lead to highly personalized and manipulative advertising, or even data being sold to third parties without your explicit consent.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+                <p class="mb-4">Navigate through each section, read the instructions, and complete the checklists. Your progress will be saved as you confirm each action.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+                <ul class="list-none p-0 space-y-3">
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="overview-action1" disabled>
+                        <label for="overview-action1" class="text-text-muted cursor-not-allowed">Read the "What this is" section.</label>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="overview-action2" disabled>
+                        <label for="overview-action2" class="text-text-muted cursor-not-allowed">Understand the "Why it matters" explanation.</label>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="overview-action3" disabled>
+                        <label for="overview-action3" class="text-text-muted cursor-not-allowed">Familiarize yourself with the navigation on the left.</label>
+                    </li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+                <p class="mb-4">You have successfully reviewed the dashboard's purpose and structure. Proceed to the next section to begin taking action.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://www.cisa.gov/cyber-safety" target="_blank" class="tool-card group">
+                        <img src="https://www.google.com/s2/favicons?domain=cisa.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                        <div class="flex-1">
+                            <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">CISA Security Tips</h4>
+                            <p class="text-sm text-text-muted mt-1">General best practices for online security.</p>
+                            <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                        </div>
+                    </a>
+                    <a href="https://ssd.eff.org/" target="_blank" class="tool-card group">
+                        <img src="https://www.google.com/s2/favicons?domain=eff.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                        <div class="flex-1">
+                            <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Surveillance Self-Defense</h4>
+                            <p class="text-sm text-text-muted mt-1">EFF's guide to defending yourself from surveillance.</p>
+                            <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+                <ul class="list-disc list-inside text-red-500 space-y-2">
+                    <li><strong>Warning:</strong> Skipping sections will leave gaps in your protection.</li>
+                    <li><strong>Warning:</strong> Assuming you are already secure without verifying actions.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Email as Identity Section -->
+        <section id="email-identity" class="dashboard-section hidden">
+            <div class="card">
+                <h2 class="text-3xl font-bold mb-4">Email as Identity</h2>
+                <p class="text-lg text-text-muted mb-6">Separate your primary email from online services to reduce risk.</p>
+                
+                <!-- Section Banner Image -->
+                <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Email+Security" alt="Email Security Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+                <p class="mb-4">This section guides you on how to use different email addresses for different purposes, especially separating your critical accounts (banking, government, primary communication) from less important online services (shopping, newsletters, forums).</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+                <p class="mb-4">Using multiple email addresses to compartmentalize your digital identity and minimize the impact of a single email compromise.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+                <p class="mb-4">Your email address is often the key to resetting passwords and accessing many of your online accounts. If a less secure service you signed up for with your primary email gets breached, your primary email becomes vulnerable, potentially exposing all linked accounts.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+                <p class="mb-4">Imagine using your main email for a new online store. That store suffers a data breach, and your email address is leaked. Now, spammers target your primary inbox, and attackers might try to use that email to reset passwords on your banking or social media accounts. By using a separate "junk" email for such services, you contain the risk to that less critical address.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+                <p class="mb-4">Follow these steps to establish a clear separation for your email identities.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+                <ul class="list-none p-0 space-y-3" data-section-id="email-identity">
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="email-identity-action1">
+                        <label for="email-identity-action1" class="text-text-muted">Create a new, dedicated email address for critical accounts (banking, government, healthcare).</label>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="email-identity-action2">
+                        <label for="email-identity-action2" class="text-text-muted">Update your critical accounts to use this new, dedicated email address.</label>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="email-identity-action3">
+                        <label for="email-identity-action3" class="text-text-muted">Create a separate email address for newsletters, shopping, and less sensitive online registrations.</label>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <input type="checkbox" id="email-identity-action4">
+                        <label for="email-identity-action4" class="text-text-muted">Commit to using the appropriate email for new sign-ups going forward.</label>
+                    </li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+                <p class="mb-4">You have successfully separated your email identities, significantly reducing your exposure to breaches.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <a href="https://proton.me/mail" target="_blank" class="tool-card group">
+                        <img src="https://www.google.com/s2/favicons?domain=proton.me&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Proton Icon">
+                        <div class="flex-1">
+                            <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Proton Mail</h4>
+                            <p class="text-sm text-text-muted mt-1">Secure, encrypted email service based in Switzerland.</p>
+                            <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                        </div>
+                    </a>
+                    <a href="https://www.google.com/gmail/about/" target="_blank" class="tool-card group">
+                        <img src="https://www.google.com/s2/favicons?domain=google.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Gmail Icon">
+                        <div class="flex-1">
+                            <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Gmail</h4>
+                            <p class="text-sm text-text-muted mt-1">Reliable free email service for general use.</p>
+                            <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                        </div>
+                    </a>
+                </div>
+
+                <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+                <ul class="list-disc list-inside text-red-500 space-y-2">
+                    <li><strong>Warning:</strong> Using the same password for all your email accounts, even if they are separated.</li>
+                    <li><strong>Warning:</strong> Not updating existing critical accounts to the new, dedicated email.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Password Strategy Section -->
+        <section id="password-strategy" class="dashboard-section hidden">
+            <div class="card">
+                <h2 class="text-3xl font-bold mb-4">Password Strategy</h2>
+                <p class="text-lg text-text-muted mb-6">Develop a robust strategy to create and manage unique, strong passwords.</p>
+
+                <!-- Section Banner Image -->
+                <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Password+Security" alt="Password Security Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+                <p class="mb-4">This section provides guidance on how to create strong, unique passwords for all your online accounts and how to manage them effectively, typically using a password manager.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+                <p class="mb-4">A systematic approach to generating and storing complex, distinct passwords for every online service you use.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+                <p class="mb-4">Password reuse is one of the biggest security risks. If one service you use is breached, and you've reused that password elsewhere, attackers can easily gain access to all your other accounts.</p>
+
+                <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3> <p class="mb-4">Imagine you use "MyDogName123!" for your social media, email, and banking. If the social media site is hacked and your password is leaked, criminals will immediately try "MyDogName123!" on your email and banking accounts. A strong password strategy prevents this domino effect, making each account an independent fortress.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Implement these steps to secure your accounts with unique and strong passwords.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="password-strategy">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action1">
+                    <label for="password-strategy-action1" class="text-text-muted">Choose a reputable password manager (e.g., LastPass, 1Password, Bitwarden) and set it up.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action2">
+                    <label for="password-strategy-action2" class="text-text-muted">Generate a strong, unique master password for your password manager and store it securely offline.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action3">
+                    <label for="password-strategy-action3" class="text-text-muted">Identify all your critical online accounts (email, banking, social media, cloud storage).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action4">
+                    <label for="password-strategy-action4" class="text-text-muted">For each critical account, use your password manager to generate a new, strong, and unique password.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action5">
+                    <label for="password-strategy-action5" class="text-text-muted">Update the passwords for all identified critical accounts to these new, unique passwords.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="password-strategy-action6">
+                    <label for="password-strategy-action6" class="text-text-muted">Commit to using the password manager for all new account registrations and password changes.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have successfully eliminated password reuse for your critical accounts and established a system for strong password management.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://bitwarden.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=bitwarden.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Bitwarden</h4>
+                        <p class="text-sm text-text-muted mt-1">Trusted, open-source password manager for all devices.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://1password.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=1password.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">1Password</h4>
+                        <p class="text-sm text-text-muted mt-1">Industry-standard manager with excellent family features.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.lastpass.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=lastpass.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">LastPass</h4>
+                        <p class="text-sm text-text-muted mt-1">Popular manager with free and premium tiers.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://haveibeenpwned.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=haveibeenpwned.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Have I Been Pwned?</h4>
+                        <p class="text-sm text-text-muted mt-1">Check if your email or password has been compromised.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Writing down your master password in an easily accessible place.</li>
+                <li><strong>Warning:</strong> Relying on browser-saved passwords instead of a dedicated password manager.</li>
+                <li><strong>Warning:</strong> Not updating *all* critical accounts, leaving some vulnerable.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Two Factor Protection Section -->
+    <section id="two-factor-protection" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Two Factor Protection</h2>
+            <p class="text-lg text-text-muted mb-6">Add an extra layer of security to your accounts with Two-Factor Authentication (2FA).</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Two-Factor+Protection" alt="2FA Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section explains Two-Factor Authentication (2FA) and guides you through enabling it on your important accounts, emphasizing the use of strong second factors like authenticator apps or hardware keys over SMS.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">A security method requiring two different types of verification to prove your identity, typically something you know (password) and something you have (phone, hardware key).</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Even with a strong, unique password, accounts can still be compromised through phishing or malware. 2FA acts as a critical second barrier, preventing unauthorized access even if your password is stolen.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">If a hacker steals your password, without 2FA, they can log right into your account. With 2FA enabled, even with your password, they would still need the second factor – for example, a code from your authenticator app or access to your physical security key – which they don't have. This significantly reduces the chance of a successful breach. SMS-based 2FA is less secure as SIM-swapping attacks can bypass it.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Follow these steps to enable and manage Two-Factor Authentication for your critical accounts.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="two-factor-protection">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="two-factor-action1">
+                    <label for="two-factor-action1" class="text-text-muted">Identify all critical accounts that support 2FA (email, banking, social media, cloud storage, password manager).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="two-factor-action2">
+                    <label for="two-factor-action2" class="text-text-muted">Download and set up a reputable authenticator app (e.g., Google Authenticator, Authy) on your smartphone.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="two-factor-action3">
+                    <label for="two-factor-action3" class="text-text-muted">Enable 2FA on your critical accounts, prioritizing authenticator apps or hardware keys over SMS where possible.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="two-factor-action4">
+                    <label for="two-factor-action4" class="text-text-muted">Save all recovery codes provided by services in a secure, offline location (e.g., encrypted drive, physical safe).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="two-factor-action5">
+                    <label for="two-factor-action5" class="text-text-muted">Test your 2FA setup by logging out and logging back into a few accounts to ensure it works correctly.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have successfully enabled strong Two-Factor Authentication on your critical accounts and secured your recovery options.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://authy.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=authy.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Authy</h4>
+                        <p class="text-sm text-text-muted mt-1">User-friendly 2FA app with cloud backups.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=google.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Google Authenticator</h4>
+                        <p class="text-sm text-text-muted mt-1">Standard 2FA app by Google.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.yubico.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=yubico.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">YubiKey</h4>
+                        <p class="text-sm text-text-muted mt-1">Physical hardware security keys for maximum protection.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.dongleauth.info/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=dongleauth.info&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">DongleAuth</h4>
+                        <p class="text-sm text-text-muted mt-1">Directory of sites that support hardware keys.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Relying solely on SMS for 2FA, which can be vulnerable to SIM-swapping.</li>
+                <li><strong>Warning:</strong> Not saving recovery codes, which can lead to permanent account lockout if you lose your second factor device.</li>
+                <li><strong>Warning:</strong> Forgetting to enable 2FA on your password manager, which is a critical oversight.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Scam and Fraud Awareness Section -->
+    <section id="scam-fraud-awareness" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Scam and Fraud Awareness</h2>
+            <p class="text-lg text-text-muted mb-6">Learn to recognize and avoid common online scams and fraud attempts.</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Scam+%26+Fraud+Awareness" alt="Scam Awareness Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section educates you on various types of online scams, phishing attempts, and fraudulent schemes, providing practical tips to identify and avoid them. It focuses on developing a skeptical mindset towards unsolicited communications.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">Understanding the tactics used by fraudsters to trick you into revealing personal information or sending money, and developing habits to protect yourself.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Scams and fraud are constantly evolving. Being aware of common techniques helps you protect your finances, identity, and personal data from malicious actors who exploit trust and urgency.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">A common phishing scam involves an email that looks like it's from your bank, asking you to "verify your account" by clicking a link. If you click and enter your credentials on the fake site, attackers steal your login information. Another example is a tech support scam where a pop-up claims your computer is infected and asks you to call a number, leading to remote access and demands for payment. Recognizing these patterns is your first line of defense.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Commit to these behaviors to enhance your awareness and resistance to scams.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="scam-fraud-awareness">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="scam-fraud-action1">
+                    <label for="scam-fraud-action1" class="text-text-muted">Learn to identify phishing emails: check sender address, look for generic greetings, poor grammar, and suspicious links (hover before clicking).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="scam-fraud-action2">
+                    <label for="scam-fraud-action2" class="text-text-muted">Be wary of unsolicited calls, texts, or emails demanding immediate action or personal information.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="scam-fraud-action3">
+                    <label for="scam-fraud-action3" class="text-text-muted">Never click on suspicious links or download attachments from unknown senders.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="scam-fraud-action4">
+                    <label for="scam-fraud-action4" class="text-text-muted">Verify requests for money or personal information by contacting the organization directly using official contact details, not those provided in the suspicious communication.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="scam-fraud-action5">
+                    <label for="scam-fraud-action5" class="text-text-muted">Commit to regularly reviewing common scam types and staying informed about new fraud tactics.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have committed to a behavior of vigilance and awareness against online scams and fraud.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://consumer.ftc.gov/scams" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=ftc.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">FTC Scam Alerts</h4>
+                        <p class="text-sm text-text-muted mt-1">Latest scam alerts from the Federal Trade Commission.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.usa.gov/scams-and-fraud" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=usa.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">USA.gov Fraud</h4>
+                        <p class="text-sm text-text-muted mt-1">Official US government guide to preventing scams.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://apwg.org/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=apwg.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Anti-Phishing Working Group</h4>
+                        <p class="text-sm text-text-muted mt-1">Global coalition fighting cybercrime.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Assuming an email is legitimate because it looks official. Always verify the sender.</li>
+                <li><strong>Warning:</strong> Acting quickly under pressure from urgent-sounding scam messages. Take a moment to think and verify.</li>
+                <li><strong>Warning:</strong> Sharing personal details or clicking links without double-checking the source.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Inbox and Account Cleanup Section -->
+    <section id="inbox-account-cleanup" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Inbox and Account Cleanup</h2>
+            <p class="text-lg text-text-muted mb-6">Reduce your digital footprint by cleaning up old accounts and managing your inbox.</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Inbox+Cleanup" alt="Inbox Cleanup Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section guides you through identifying and closing unused online accounts, unsubscribing from unwanted newsletters, and generally reducing the number of digital access points that could be exploited.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">Minimizing your online presence by deactivating dormant accounts and decluttering your digital communications to reduce potential attack surfaces.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Every online account you have, especially those you no longer use, represents a potential vulnerability. If an old, forgotten account is breached, your associated email or other personal data could be exposed without your knowledge.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">You might have signed up for a forum or an old e-commerce site years ago and forgotten about it. If that site suffers a data breach, your old username and password (which you might have reused) could be leaked. This provides attackers with information they can use to try and access your active accounts. Cleaning up these dormant accounts removes these hidden risks.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Take these actions to reduce your digital footprint and improve your security posture.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="inbox-account-cleanup">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="cleanup-action1">
+                    <label for="cleanup-action1" class="text-text-muted">Review your email inbox for old account creation confirmations and identify accounts you no longer use.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="cleanup-action2">
+                    <label for="cleanup-action2" class="text-text-muted">For each identified unused account, navigate to the service's website and follow their account deletion or deactivation process.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="cleanup-action3">
+                    <label for="cleanup-action3" class="text-text-muted">Unsubscribe from unwanted newsletters and marketing emails to reduce inbox clutter and potential phishing targets.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="cleanup-action4">
+                    <label for="cleanup-action4" class="text-text-muted">Review connected apps and services on your primary accounts (e.g., Google, Facebook) and revoke access for those you don't recognize or no longer use.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="cleanup-action5">
+                    <label for="cleanup-action5" class="text-text-muted">Commit to regularly reviewing your online accounts and digital subscriptions for necessary cleanup.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have successfully reduced your unused access points and minimized your digital footprint.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://backgroundchecks.org/justdeleteme/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=backgroundchecks.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">JustDelete.me</h4>
+                        <p class="text-sm text-text-muted mt-1">Directory of direct links to delete various online accounts.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://unroll.me/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=unroll.me&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Unroll.me</h4>
+                        <p class="text-sm text-text-muted mt-1">Instantly see a list of all your subscription emails.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://myaccount.google.com/permissions" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=google.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Google Permissions</h4>
+                        <p class="text-sm text-text-muted mt-1">Manage third-party apps connected to your Google account.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Simply abandoning old accounts instead of properly deleting them.</li>
+                <li><strong>Warning:</strong> Not checking connected apps and services, which can allow broad access to your data.</li>
+                <li><strong>Warning:</strong> Forgetting to check all your email addresses for associated accounts.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Breach Detection Section -->
+    <section id="breach-detection" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Breach Detection</h2>
+            <p class="text-lg text-text-muted mb-6">Understand how to detect if your data has been exposed and what to do next.</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Breach+Detection" alt="Breach Detection Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section focuses on tools and practices to monitor for potential data breaches involving your personal information and provides a clear plan of action if your data is found to be exposed.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">Proactively checking if your email addresses, passwords, or other personal data have been compromised in public data breaches and knowing how to respond.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Data breaches are common, and your information might be exposed without your direct knowledge. Early detection allows you to take protective measures before attackers can exploit your compromised data.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">If your email address and a password from an old forum are leaked in a breach, attackers might use that information to try and log into your other accounts. By using a breach detection service, you can be alerted to this exposure, allowing you to immediately change the compromised password and enable 2FA on affected accounts, preventing further damage.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Implement these steps to monitor for breaches and prepare your response plan.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="breach-detection">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="breach-detection-action1">
+                    <label for="breach-detection-action1" class="text-text-muted">Sign up for a reputable breach notification service (e.g., Have I Been Pwned) using your primary email address.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="breach-detection-action2">
+                    <label for="breach-detection-action2" class="text-text-muted">Regularly check if any of your email addresses or phone numbers have appeared in known data breaches.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="breach-detection-action3">
+                    <label for="breach-detection-action3" class="text-text-muted">Create a clear response plan for when a breach is detected: immediately change passwords, enable 2FA, and monitor affected accounts.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="breach-detection-action4">
+                    <label for="breach-detection-action4" class="text-text-muted">Commit to staying informed about major data breaches and their potential impact.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have established a system for exposure awareness and a clear response plan for data breaches.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://haveibeenpwned.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=haveibeenpwned.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Have I Been Pwned?</h4>
+                        <p class="text-sm text-text-muted mt-1">Check if your email or phone is in a data breach.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://monitor.firefox.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=monitor.firefox.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Firefox Monitor</h4>
+                        <p class="text-sm text-text-muted mt-1">Get alerts when your information appears in breaches.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.identitytheft.gov/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=identitytheft.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">IdentityTheft.gov</h4>
+                        <p class="text-sm text-text-muted mt-1">Report and recover from identity theft (US).</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Ignoring breach notifications or delaying action when your data is exposed.</li>
+                <li><strong>Warning:</strong> Only checking one email address; ensure all your active emails are monitored.</li>
+                <li><strong>Warning:</strong> Panicking instead of following a structured response plan during a breach.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Tracking, Cookies, Ads Section -->
+    <section id="tracking-cookies-ads" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Tracking, Cookies, Ads</h2>
+            <p class="text-lg text-text-muted mb-6">Take control of your online privacy by managing tracking, cookies, and personalized ads.</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Tracking+%26+Ads" alt="Tracking and Ads Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section explains how websites and advertisers track your online activity using cookies and other technologies, and provides actionable steps to minimize this tracking and reduce personalized advertising.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">Implementing browser settings and tools to limit how companies collect and use your online behavior data for advertising and profiling.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Extensive online tracking can lead to a loss of privacy, manipulation through targeted advertising, and your data being shared or sold to numerous third parties without your full understanding or consent.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">When you visit a shopping site, cookies remember what you viewed. Later, you might see ads for those exact products on other websites or social media. This is targeted advertising based on tracking. More concerning, this data can build a detailed profile of your interests, habits, and even vulnerabilities, which can be used for purposes beyond simple advertising. Taking control means limiting who can build these profiles.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Apply these browser hygiene practices to enhance your privacy against tracking.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+            <ul class="list-none p-0 space-y-3" data-section-id="tracking-cookies-ads">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="tracking-action1">
+                    <label for="tracking-action1" class="text-text-muted">Install a reputable ad blocker and privacy-focused browser extension (e.g., uBlock Origin, Privacy Badger, DuckDuckGo Privacy Essentials).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="tracking-action2">
+                    <label for="tracking-action2" class="text-text-muted">Configure your browser settings to block third-party cookies and send "Do Not Track" requests (though not universally honored).</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="tracking-action3">
+                    <label for="tracking-action3" class="text-text-muted">Regularly clear your browser's cookies and cache, or use your browser's private/incognito mode for sensitive browsing.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="tracking-action4">
+                    <label for="tracking-action4" class="text-text-muted">Review and adjust your privacy settings on major platforms (Google, Facebook, etc.) to limit ad personalization.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="tracking-action5">
+                    <label for="tracking-action5" class="text-text-muted">Consider using a privacy-focused browser (e.g., Brave, Firefox with enhanced tracking protection) as your default.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have successfully applied browser hygiene practices to limit online tracking and manage personalized ads.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://ublockorigin.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=ublockorigin.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">uBlock Origin</h4>
+                        <p class="text-sm text-text-muted mt-1">Efficient wide-spectrum content blocker.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://privacybadger.org/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=privacybadger.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Privacy Badger</h4>
+                        <p class="text-sm text-text-muted mt-1">Automatically learns to block invisible trackers.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://duckduckgo.com/app" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=duckduckgo.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">DuckDuckGo</h4>
+                        <p class="text-sm text-text-muted mt-1">Privacy browser essentials and search.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://brave.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=brave.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Brave Browser</h4>
+                        <p class="text-sm text-text-muted mt-1">Fast, private browser with built-in ad blocker.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Assuming "Do Not Track" requests are always honored by websites.</li>
+                <li><strong>Warning:</strong> Not regularly clearing cookies, which can allow trackers to persist.</li>
+                <li><strong>Warning:</strong> Relying on default browser settings for privacy, which are often not optimized for protection.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Reports and Resources Section -->
+    <section id="reports-resources" class="dashboard-section hidden">
+        <div class="card">
+            <h2 class="text-3xl font-bold mb-4">Reports and Resources</h2>
+            <p class="text-lg text-text-muted mb-6">Know where to report incidents and find additional security resources.</p>
+
+            <!-- Section Banner Image -->
+            <img src="https://placehold.co/1200x400/1a1a23/ff5011?text=Reports+%26+Resources" alt="Reports and Resources Banner" class="w-full h-auto rounded-lg mb-8 shadow-md object-cover">
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+            <p class="mb-4">This section provides information on official channels for reporting cyber incidents, scams, and fraud, along with a curated list of reliable external resources for ongoing learning and support.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+            <p class="mb-4">A guide to official reporting paths for security incidents and a collection of trusted external resources for further privacy and security education.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+            <p class="mb-4">Knowing where to report incidents is crucial for both your own recovery and for contributing to the broader fight against cybercrime. Access to reliable resources ensures you can continue to stay informed and protect yourself.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+            <p class="mb-4">If you fall victim to a phishing scam, reporting it to the relevant authorities (e.g., FTC, FBI's IC3) can help them track down criminals and prevent others from being victimized. If you discover a vulnerability, knowing where to report it responsibly can help improve overall security. Without this knowledge, incidents might go unreported, allowing threats to persist.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+            <p class="mb-4">Familiarize yourself with these reporting paths and resources.</p>
+            <ul class="list-none p-0 space-y-3" data-section-id="reports-resources">
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="reports-action1">
+                    <label for="reports-action1" class="text-text-muted">Identify the appropriate government agencies or organizations in your region for reporting cybercrime, fraud, and identity theft.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="reports-action2">
+                    <label for="reports-action2" class="text-text-muted">Bookmark or save the contact information for these reporting channels.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="reports-action3">
+                    <label for="reports-action3" class="text-text-muted">Review the provided list of external resources for ongoing privacy and security education.</label>
+                </li>
+                <li class="flex items-start gap-3">
+                    <input type="checkbox" id="reports-action4">
+                    <label for="reports-action4" class="text-text-muted">Commit to regularly checking trusted security news sources to stay updated on new threats and best practices.</label>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+            <p class="mb-4">You have gained knowledge of reporting paths and access to valuable resources for ongoing security.</p>
+
+            <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="https://www.ic3.gov/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=ic3.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">FBI IC3</h4>
+                        <p class="text-sm text-text-muted mt-1">Report internet crime directly to the FBI.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.ncsc.gov.uk/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=ncsc.gov.uk&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">NCSC (UK)</h4>
+                        <p class="text-sm text-text-muted mt-1">National Cyber Security Centre reporting and advice.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://krebsonsecurity.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=krebsonsecurity.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Krebs on Security</h4>
+                        <p class="text-sm text-text-muted mt-1">In-depth security news and investigation blog.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+                <a href="https://www.schneier.com/" target="_blank" class="tool-card group">
+                    <img src="https://www.google.com/s2/favicons?domain=schneier.com&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+                    <div class="flex-1">
+                        <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Schneier on Security</h4>
+                        <p class="text-sm text-text-muted mt-1">Expert analysis on security technology and policy.</p>
+                        <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource &rarr;</span>
+                    </div>
+                </a>
+            </div>
+
+            <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+            <ul class="list-disc list-inside text-red-500 space-y-2">
+                <li><strong>Warning:</strong> Not reporting incidents because you think they are too small or insignificant.</li>
+                <li><strong>Warning:</strong> Relying on unofficial or unverified sources for security advice.</li>
+                <li><strong>Warning:</strong> Assuming that once you've completed the dashboard, your security journey is over. It's an ongoing process.</li>
+            </ul>
+        </div>
+    </section>
+
+
+
+
+
+
+    <!-- Demo Tool 1 Section -->
+    <section id="demo-tool-1" class="dashboard-section hidden">
+        <div class="card h-full">
+            <h2 class="text-3xl font-bold mb-4">Your Privacy Coach</h2>
+            <div class="w-full h-[800px] bg-white rounded-lg overflow-hidden">
+                <iframe src="https://asistente.chatterbot.support/share/fd300cb92838400281db4663348cf6ab" class="w-full h-full border-0" title="Demo Tool 1"></iframe>
+            </div>
+        </div>
+    </section>
+    
+    
+    
+    
+
+    <!-- Demo Tool 2 Section -->
+    <section id="demo-tool-2" class="dashboard-section hidden">
+        <div class="card h-full">
+            <h2 class="text-3xl font-bold mb-4">Demo Tool 2</h2>
+            <div class="w-full h-[800px] bg-white rounded-lg overflow-hidden">
+                <iframe src="https://www.wikipedia.org/" class="w-full h-full border-0" title="Demo Tool 2"></iframe>
+            </div>
+        </div>
+        
+        
+        
+        
+        
+        
+    </section>
+
+    <!-- Main Footer -->
+    <footer class="mt-12 pt-6 border-t border-[var(--border)] text-center text-sm text-text-muted pb-8">
+        <p>&copy; 2025 Privacy & Security Dashboard. All rights reserved.</p>
+    </footer>
+
+</main>
+
+<!-- Back to Top Button HTML -->
+<button id="back-to-top" aria-label="Back to Top"></button>
+
+<script>
+    // --- Page Loader Logic ---
+    function showLoader() {
+        const loader = document.createElement('div');
+        loader.className = 'page-loader';
+        loader.innerHTML = `
+            <div class="loader-header">Loading...</div>
+            <div class="progress"></div>
+        `;
+        document.body.appendChild(loader);
+        return loader;
+    }
+
+    function initLoader() {
+        const loader = showLoader();
+        setTimeout(() => {
+            loader.classList.add('hidden');
+            setTimeout(() => loader.remove(), 300); // Remove after fade out
+        }, 1500); // Adjust duration as needed
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initLoader();
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    });
+
+    // --- Dashboard Logic ---
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.dashboard-section');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    const totalActionableSections = 8; // All sections except Overview
+    let completedSections = 0;
+
+    // Load progress from localStorage
+    const savedProgress = JSON.parse(localStorage.getItem('dashboardProgress')) || {};
+
+    function updateProgress() {
+        completedSections = 0;
+        sections.forEach(section => {
+            const sectionId = section.id;
+            if (sectionId === 'overview') return; // Overview does not count towards progress
+
+            const checkboxes = section.querySelectorAll(`ul[data-section-id="${sectionId}"] input[type="checkbox"]`);
+            if (checkboxes.length > 0) {
+                const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                if (allChecked) {
+                    completedSections++;
+                }
+            }
+        });
+
+        const percentage = (completedSections / totalActionableSections) * 100;
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `${Math.round(percentage)}% Complete (${completedSections}/${totalActionableSections} Sections)`;
+    }
+
+    function saveProgress() {
+        const currentProgress = {};
+        sections.forEach(section => {
+            const sectionId = section.id;
+            const checkboxes = section.querySelectorAll(`ul[data-section-id="${sectionId}"] input[type="checkbox"]`);
+            if (checkboxes.length > 0) {
+                currentProgress[sectionId] = Array.from(checkboxes).map(checkbox => checkbox.checked);
+            }
+        });
+        localStorage.setItem('dashboardProgress', JSON.stringify(currentProgress));
+        updateProgress();
+    }
+
+    function loadProgress() {
+        sections.forEach(section => {
+            const sectionId = section.id;
+            const checkboxes = section.querySelectorAll(`ul[data-section-id="${sectionId}"] input[type="checkbox"]`);
+            if (checkboxes.length > 0 && savedProgress[sectionId]) {
+                savedProgress[sectionId].forEach((isChecked, index) => {
+                    if (checkboxes[index]) {
+                        checkboxes[index].checked = isChecked;
+                    }
+                });
+            }
+        });
+        updateProgress();
+    }
+
+    function showSection(id) {
+        sections.forEach(section => {
+            section.classList.add('hidden');
+        });
+        document.getElementById(id).classList.remove('hidden');
+
+        navItems.forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`.nav-item[data-section="${id}"]`).classList.add('active');
+    }
+
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const sectionId = item.dataset.section;
+            showSection(sectionId);
+        });
+    });
+
+    // Add event listeners for all checkboxes to update and save progress
+    document.querySelectorAll('.dashboard-section input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', saveProgress);
+    });
+
+    // Initial load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProgress();
+        showSection('overview'); // Show overview by default
+    });
+
+    // --- Back to Top Button Logic ---
+    const toTopButton = document.getElementById('back-to-top');
+    const mainContent = document.querySelector('.main-content');
+
+    // Attach scroll listener to mainContent instead of window
+    mainContent.addEventListener('scroll', function() {
+        if (mainContent.scrollTop > 300) {
+            toTopButton.classList.add('show');
+        } else {
+            toTopButton.classList.remove('show');
+        }
+    });
+
+    toTopButton.onclick = function() {
+        // Smoothly scroll the main content area to the top
+        mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+</script>
+</body> </html>
