@@ -361,4 +361,29 @@ scroll-behavior: smooth;
     border-radius: 2rem; /* Adjust as needed */
 }       
         
-       
+
+
+
+
+
+/* Optional: Add some smooth transitions */
+#video-thumbnail {
+    transition: opacity 0.3s ease;
+}
+
+#overview-video {
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+
+
+
+
+
+
+
