@@ -132,3 +132,55 @@
         // Smoothly scroll the main content area to the top
         mainContent.scrollTo({ top: 0, behavior: 'smooth' });
     };
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const videoContainer = document.getElementById('video-container');
+    const videoThumbnail = document.getElementById('video-thumbnail');
+    const videoElement = document.getElementById('overview-video');
+    
+    // Play video when thumbnail is clicked
+    videoThumbnail.addEventListener('click', function() {
+        // Hide thumbnail
+        videoThumbnail.style.display = 'none';
+        
+        // Show and play video
+        videoElement.classList.remove('hidden');
+        videoElement.play();
+        
+        // Optional: Add loading state
+        videoElement.addEventListener('loadeddata', function() {
+            videoElement.classList.add('opacity-100');
+        });
+    });
+    
+    // Optional: Show thumbnail again when video ends
+    videoElement.addEventListener('ended', function() {
+        videoElement.classList.add('hidden');
+        videoThumbnail.style.display = 'flex';
+    });
+    
+    // Optional: Pause video when it goes out of view
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting && !videoElement.paused) {
+                    videoElement.pause();
+                }
+            });
+        },
+        { threshold: 0.5 }
+    );
+    
+    observer.observe(videoContainer);
+});
+
+
+
+
