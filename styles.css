@@ -383,7 +383,38 @@ scroll-behavior: smooth;
 
 
 
+/* Progress bar container adjustments */
+.progress-container {
+    position: relative;
+    height: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: 9999px;
+    overflow: hidden;
+    padding: 0 0.75rem; /* Add padding to prevent icons from being cut off */
+}
 
+/* Progress bar itself */
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, #ff7b4d 100%);
+    border-radius: 9999px;
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure the progress bar doesn't cover the lock icons */
+.progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    border-radius: inherit;
+}
 
 
 
