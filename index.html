@@ -92,24 +92,24 @@
         
 <!-- MAIN HEADER (Progress Bar Location) -->
 <header class="main-header">
-    <div class="flex justify-between items-center mb-2">
+    <div class="flex justify-between items-center mb-3">
         <h3 class="text-lg font-semibold text-text-main m-0">Your Progress</h3>
         <p class="text-sm text-text-muted m-0" id="progressText">0% Complete (0/8 Sections)</p>
     </div>
     <div class="progress-container relative">
         <!-- Open Lock Icon at Start -->
-        <div class="open-lock-icon absolute -left-3 -top-4 z-50 flex items-center justify-center w-16 h-16 rounded-full border-2 border-primary bg-white shadow-xl">
+        <div class="open-lock-icon absolute -left-3 -top-4 z-50 flex items-center justify-center w-8 h-8 rounded-full border-0 border-primary shadow-xl">
             <i data-lucide="lock-open" class="w-8 h-8 text-primary"></i>
         </div>
         
         <!-- Progress Bar Background (The empty line) -->
-        <div class="w-full h-4 bg-[#0d0d0d] rounded-full overflow-hidden mt-2">
+        <div class="w-full h-4 bg-[#0d0d0d] rounded-full overflow-hidden mt-4">
             <!-- Progress Bar Fill -->
             <div class="progress-bar h-full bg-primary rounded-full" id="progressBar"></div>
         </div>
         
         <!-- Closed Lock Icon at End -->
-        <div class="closed-lock-icon absolute -right-3 -top-4 z-50 flex items-center justify-center w-16 h-16 rounded-full border-2 border-primary bg-white shadow-xl cursor-pointer" title="Click when complete for celebration!">
+        <div class="closed-lock-icon absolute -right-3 -top-4 z-50 flex items-center justify-center w-8 h-8 rounded-full border-0 border-primary shadow-xl cursor-pointer" title="Click when complete for celebration!">
             <i data-lucide="lock" class="w-8 h-8 text-primary"></i>
         </div>
     </div>
