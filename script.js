@@ -17,7 +17,7 @@
             // 2. Initialize Loader
             const loader = document.createElement('div');
             loader.className = 'page-loader';
-            loader.innerHTML = `<div class="loader-header">Loading...</div><div class="progress"></div>`;
+            loader.innerHTML = `<div class="loader-header">Wait for it...</div><div class="progress"></div>`;
             document.body.appendChild(loader);
             setTimeout(() => {
                 loader.classList.add('hidden');
@@ -87,7 +87,7 @@
                 if (lockWrapper) {
                     lockWrapper.innerHTML = ''; // Clear existing
                     const newIcon = document.createElement('i');
-                    newIcon.className = 'w-5 h-5 text-primary lock-icon';
+                    newIcon.className = 'w-3 h-3 text-primary lock-icon';
 
                     if (percentage >= 100) {
                         newIcon.setAttribute('data-lucide', 'lock-keyhole-open');
