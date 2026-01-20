@@ -647,6 +647,7 @@ scroll-behavior: smooth;
         color: var(--text-inverse);
         border: none;
         padding: 0.8rem 1.5rem;
+       margin-top: 2rem;
         border-radius: var(--border-radius-sm);
         font-weight: 600;
         font-size: 1rem;
