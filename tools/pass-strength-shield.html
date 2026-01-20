@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Shield</title>
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Theme Variables (Dark Mode Only) --- */
+        :root {
+            --skin-color: #ff5011;         /* Primary Accent (Orange) */
+            --mirage-color: hsl(210, 10%, 23%);  /* Secondary/Dark Gray */
+            --title-color: hsl(242, 8%, 98%);    /* Near White */
+            --text-color: hsl(242, 8%, 80%);     /* Light Gray */
+            --body-color: #0d0d0d;               /* Almost Black Background */
+            --box-color: hsl(242, 14%, 12%);     /* Card Background */
+            
+            --primary: var(--skin-color);
+            --secondary: var(--mirage-color);
+            
+            --bg-body: var(--body-color);
+            --bg-card: var(--box-color);
+            --bg-input: hsl(242, 14%, 16%);
+            
+            --text-main: var(--title-color);
+            --text-muted: var(--text-color);
+            --text-inverse: #ffffff;
+            
+            --border: var(--mirage-color);
+            --accent: rgba(255, 80, 17, 0.15);    /* Semi-transparent Orange */
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 0.75rem;
+            --body-font: 'Inter', sans-serif;
+            
+            --chart-pending: #ef4444;      /* Red for weak/missing */
+            --chart-warning: #f59e0b;      /* Amber for medium */
+            --chart-completed: #ff5011;    /* Orange for strong */
+            --chart-success: #22c55e;      /* Green for very strong */
+
+            /* Swiper Scrollbar CSS - using general scrollbar variables */
+            --scroll-box-color: var(--mirage-color); 
+            --scroll-thumb-color: var(--skin-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        /* --- Layout & Typography --- */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--skin-color);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* --- Card Styles --- */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        /* --- Password Input Area --- */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="password"], input[type="text"] {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 2px solid var(--border);
+            color: var(--text-main);
+            padding: 1rem 3rem 1rem 1rem;
+            font-size: 1.1rem;
+            border-radius: var(--border-radius-sm);
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-family: monospace; /* Better for reading passwords */
+        }
+
+        input:focus {
+            border-color: var(--skin-color);
+            box-shadow: 0 0 0 4px var(--accent);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            padding: 0;
+        }
+
+        .toggle-password:hover {
+            color: var(--skin-color);
+        }
+
+        /* --- Main Strength Meter --- */
+        .strength-overall {
+            margin-bottom: 2rem;
+        }
+
+        .strength-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .strength-text {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .main-bar-bg {
+            height: 8px;
+            background-color: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .main-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--chart-pending);
+            border-radius: 4px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.4s ease;
+        }
+
+        /* --- Legends (Detailed Analysis) --- */
+        .legends-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--title-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 480px) {
+            .legend-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .legend-item {
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: background-color 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .legend-item.active {
+            background-color: var(--accent);
+            border-color: rgba(255, 80, 17, 0.3);
+        }
+
+        .legend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .legend-icon {
+            font-size: 1.1rem;
+            color: var(--mirage-color); /* Inactive color */
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .legend-item.active .legend-icon {
+            color: var(--skin-color);
+            transform: scale(1.1);
+        }
+
+        .mini-bar-bg {
+            height: 4px;
+            background-color: var(--mirage-color);
+            border-radius: 2px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .mini-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--skin-color);
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* --- FAQ Section --- */
+        .faq-section {
+            margin-top: 1rem;
+        }
+
+        .faq-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--skin-color);
+            text-align: center;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 1rem 0;
+            color: var(--title-color);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--body-font);
+        }
+
+        .accordion-trigger:hover {
+            color: var(--skin-color);
+        }
+
+        .accordion-trigger i {
+            transition: transform 0.3s ease;
+            color: var(--skin-color);
+        }
+
+        .accordion-trigger[aria-expanded="true"] i {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease-out;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .accordion-inner {
+            padding-bottom: 1.5rem;
+        }
+
+        /* Utility for recommendation highlight */
+        .highlight {
+            color: var(--skin-color);
+            font-weight: 600;
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        /* --- Animations --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.3s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Password Logic</h1>
+        <p class="subtitle">Test your security strength with our algorithm.</p>
+
+        <!-- Main Card -->
+        <div class="card">
+            <!-- Input -->
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <input type="password" id="passwordInput" placeholder="Type a password..." autocomplete="off">
+                    <button class="toggle-password" id="toggleBtn" aria-label="Toggle password visibility">
+                        <i class="ph ph-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overall Strength -->
+            <div class="strength-overall">
+                <div class="strength-label">
+                    <span>Security Score</span>
+                    <span id="scoreText" class="strength-text">Empty</span>
+                </div>
+                <div class="main-bar-bg">
+                    <div id="mainBar" class="main-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Legends / Specifics -->
+            <div class="legends-title">
+                <i class="ph ph-chart-bar"></i> Analysis Breakdown
+            </div>
+            
+            <div class="legend-grid">
+                <!-- Legend 1: Length -->
+                <div class="legend-item" id="leg-length">
+                    <div class="legend-header">
+                        <span>8+ Characters</span>
+                        <i class="ph ph-ruler legend-icon"></i>
+                    </div>
+                    <div class="mini-bar-bg">
+                        <div class="mini-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Legend 2: Numbers -->
+                <div class="legend-item" id="leg-number">
+                    <div class="legend-header">
+                        <span>Includes Numbers</span>
+                        <i class="ph ph-number-one legend-icon"></i>
+                    </div>
+                    <div class="mini-bar-bg">
+                        <div class="mini-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Legend 3: Uppercase -->
+                <div class="legend-item" id="leg-upper">
+                    <div class="legend-header">
+                        <span>Uppercase Letters</span>
+                        <i class="ph ph-text-aa legend-icon"></i>
+                    </div>
+                    <div class="mini-bar-bg">
+                        <div class="mini-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Legend 4: Symbols -->
+                <div class="legend-item" id="leg-symbol">
+                    <div class="legend-header">
+                        <span>Special Symbols</span>
+                        <i class="ph ph-asterisk legend-icon"></i>
+                    </div>
+                    <div class="mini-bar-bg">
+                        <div class="mini-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2 class="faq-header">Security FAQs</h2>
+        <div class="card faq-section">
+            
+            <!-- Question 1 -->
+            <div class="accordion-item">
+                <button class="accordion-trigger" aria-expanded="false">
+                    Why is password length important?
+                    <i class="ph ph-caret-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Length is mathematically the most significant factor against brute-force attacks. Every additional character exponentially increases the number of possible combinations a hacker must guess. We recommend at least <span class="highlight">12-16 characters</span>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="accordion-item">
+                <button class="accordion-trigger" aria-expanded="false">
+                    Should I use real words?
+                    <i class="ph ph-caret-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Avoid common dictionary words. Attackers use "dictionary attacks" to guess common phrases instantly. Instead, use a <span class="highlight">passphrase</span> made of random, unconnected words or a completely random string generated by a tool.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="accordion-item">
+                <button class="accordion-trigger" aria-expanded="false">
+                    How can I remember complex passwords?
+                    <i class="ph ph-caret-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        We highly recommend using a <span class="highlight">Password Manager</span>. These tools generate and store strong, unique passwords for every site, so you only need to remember one "Master Password".
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="accordion-item">
+                <button class="accordion-trigger" aria-expanded="false">
+                    How often should I change my password?
+                    <i class="ph ph-caret-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        Contrary to old advice, you shouldn't change passwords arbitrarily if they are strong and unique. Only change them if you suspect a breach or if the service notifies you of a security incident.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>Designed for Security Awareness. No data is stored.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const toggleIcon = toggleBtn.querySelector('i');
+            
+            // Visual Elements
+            const mainBar = document.getElementById('mainBar');
+            const scoreText = document.getElementById('scoreText');
+            
+            // Legend Elements
+            const legLength = document.getElementById('leg-length');
+            const legNumber = document.getElementById('leg-number');
+            const legUpper = document.getElementById('leg-upper');
+            const legSymbol = document.getElementById('leg-symbol');
+
+            // --- Password Toggle Logic ---
+            toggleBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                if (type === 'text') {
+                    toggleIcon.classList.replace('ph-eye', 'ph-eye-slash');
+                    toggleIcon.style.color = 'var(--skin-color)';
+                } else {
+                    toggleIcon.classList.replace('ph-eye-slash', 'ph-eye');
+                    toggleIcon.style.color = '';
+                }
+            });
+
+            // --- Accordion Logic ---
+            const accordions = document.querySelectorAll('.accordion-trigger');
+            accordions.forEach(acc => {
+                acc.addEventListener('click', () => {
+                    const expanded = acc.getAttribute('aria-expanded') === 'true';
+                    const content = acc.nextElementSibling;
+                    
+                    // Close all others (optional, remove for multi-open)
+                    accordions.forEach(otherAcc => {
+                        if (otherAcc !== acc) {
+                            otherAcc.setAttribute('aria-expanded', 'false');
+                            otherAcc.nextElementSibling.style.height = '0';
+                        }
+                    });
+
+                    // Toggle current
+                    acc.setAttribute('aria-expanded', !expanded);
+                    if (!expanded) {
+                        content.style.height = content.scrollHeight + 'px';
+                    } else {
+                        content.style.height = '0';
+                    }
+                });
+            });
+
+            // --- Core Password Logic ---
+            passwordInput.addEventListener('input', (e) => {
+                const val = e.target.value;
+                updateStrength(val);
+            });
+
+            function updateStrength(password) {
+                // Criteria Checks
+                const hasLength = password.length >= 8;
+                const hasNumber = /\d/.test(password);
+                const hasUpper = /[A-Z]/.test(password);
+                const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+                // Update Legends UI
+                updateLegend(legLength, hasLength);
+                updateLegend(legNumber, hasNumber);
+                updateLegend(legUpper, hasUpper);
+                updateLegend(legSymbol, hasSymbol);
+
+                // Calculate Score (0 - 5)
+                let score = 0;
+                if (password.length > 0) score++; // At least typed something
+                if (password.length >= 8) score++;
+                if (hasNumber) score++;
+                if (hasUpper) score++;
+                if (hasSymbol) score++;
+
+                // Bonus for extra length (12+) if other criteria met
+                if (password.length >= 12 && score >= 4) score++;
+                // Cap at 5
+                if (score > 5) score = 5;
+
+                // Update Main Meter
+                updateMeter(score, password.length);
+            }
+
+            function updateLegend(element, isActive) {
+                const barFill = element.querySelector('.mini-bar-fill');
+                const icon = element.querySelector('.legend-icon');
+                
+                if (isActive) {
+                    element.classList.add('active');
+                    barFill.style.width = '100%';
+                    icon.classList.replace(icon.classList[1], 'ph-check-circle'); // Change icon to check
+                } else {
+                    element.classList.remove('active');
+                    barFill.style.width = '0%';
+                    // Reset icons based on ID
+                    if(element.id === 'leg-length') icon.className = 'ph ph-ruler legend-icon';
+                    if(element.id === 'leg-number') icon.className = 'ph ph-number-one legend-icon';
+                    if(element.id === 'leg-upper') icon.className = 'ph ph-text-aa legend-icon';
+                    if(element.id === 'leg-symbol') icon.className = 'ph ph-asterisk legend-icon';
+                }
+            }
+
+            function updateMeter(score, length) {
+                let width = 0;
+                let color = 'var(--chart-pending)';
+                let text = 'Weak';
+
+                if (length === 0) {
+                    width = 0;
+                    text = 'Empty';
+                    color = 'var(--mirage-color)';
+                } else if (score <= 2) {
+                    width = 25;
+                    text = 'Weak';
+                    color = 'var(--chart-pending)';
+                } else if (score === 3) {
+                    width = 50;
+                    text = 'Medium';
+                    color = 'var(--chart-warning)';
+                } else if (score === 4) {
+                    width = 75;
+                    text = 'Strong';
+                    color = 'var(--chart-completed)';
+                } else if (score >= 5) {
+                    width = 100;
+                    text = 'Excellent';
+                    color = 'var(--chart-success)';
+                }
+
+                mainBar.style.width = width + '%';
+                mainBar.style.backgroundColor = color;
+                scoreText.innerText = text;
+                scoreText.style.color = color;
+            }
+        });
+    </script>
+</body>
+</html>
