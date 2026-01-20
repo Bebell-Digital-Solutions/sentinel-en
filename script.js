@@ -236,3 +236,60 @@
                 toTopBtn.onclick = () => mainContent.scrollTo({ top: 0, behavior: 'smooth' });
             }
         });
+
+
+
+
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+        const openBtn = document.getElementById('openToolBtn');
+        const modal = document.getElementById('toolModal');
+        const closeBtn = document.getElementById('closeModalBtn');
+        const iframe = document.getElementById('toolIframe');
+
+        if (openBtn && modal && closeBtn) {
+            // Open Modal
+            openBtn.addEventListener('click', () => {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden'; // Stop background scroll
+                
+                // Lazy load iframe source only on first click to save bandwidth
+                if (!iframe.src) {
+                    iframe.src = iframe.getAttribute('data-src');
+                }
+            });
+
+            // Close Modal Function
+            const closeModal = () => {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            };
+
+            // Close Event Listeners
+            closeBtn.addEventListener('click', closeModal);
+            
+            // Close on click outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            
+            // Close on Escape Key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('open')) {
+                    closeModal();
+                }
+            });
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
