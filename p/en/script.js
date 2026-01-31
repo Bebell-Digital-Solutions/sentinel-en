@@ -129,17 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    const now = new Date();
-    const month = now.getMonth() + 1;
-    
-    if (month === 12 || month === 1 || month === 2) {
-        const snow = document.createElement('div');
-        snow.className = 'snowflakes-blurry';
-        document.body.appendChild(snow);
-    }
-
-
-
 
 
     
