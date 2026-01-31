@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Google Data - Security & Privacy Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- Theme Variables (Dark Mode Only) --- */
+        :root {
+            --skin-color: #ff5011;        /* Primary Accent (Orange) */
+            --mirage-color: hsl(210, 10%, 23%);  /* Secondary/Dark Gray */
+            --title-color: hsl(242, 8%, 98%);    /* Near White */
+            --text-color: hsl(242, 8%, 80%);     /* Light Gray */
+            --body-color: #0d0d0d;               /* Almost Black Background */
+            --box-color: hsl(242, 14%, 12%);     /* Card Background */
+            
+            --primary: var(--skin-color);
+            --secondary: var(--mirage-color);
+            
+            --bg-body: var(--body-color);
+            --bg-card: var(--box-color);
+            --bg-input: hsl(242, 14%, 16%);
+            
+            --text-main: var(--title-color);
+            --text-muted: var(--text-color);
+            --text-inverse: #ffffff;
+            
+            --border: var(--mirage-color);
+            --accent: rgba(255, 80, 17, 0.15);   /* Semi-transparent Orange */
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            
+            --border-radius-sm: 0.5rem;
+            --border-radius-md: 0.75rem;
+            --border-radius-lg: 1rem;
+            --body-font: 'Inter', sans-serif;
+            
+            --chart-pending: #ef4444;
+            --chart-completed: #ff5011;
+
+            --scroll-box-color: var(--mirage-color);
+            --scroll-thumb-color: var(--skin-color);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 20px;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bg-body);
+            color: var(--text-muted);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-main);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #ff7b4d;
+            text-decoration: underline;
+        }
+
+        /* Page Loader */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--body-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+
+        .loader-header {
+            color: var(--title-color);
+            font-size: 24px;
+            font-family: var(--body-font);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .progress {
+            width: 272.8px;
+            height: 41.7px;
+            border-radius: 28.8px;
+            color: var(--skin-color);
+            background-color: var(--box-color);
+            border: 2.9px solid;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress::before {
+            content: "";
+            position: absolute;
+            margin: 2.9px;
+            inset: 0 100% 0 0;
+            border-radius: inherit;
+            background: currentColor;
+            animation: progress-pf82op 1.5s forwards;
+        }
+
+        @keyframes progress-pf82op {
+            100% {
+                inset: 0;
+            }
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            font-size: 1.75rem;
+        }
+
+        .logo-text {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-sm);
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 80, 17, 0.3);
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: var(--shadow);
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary) 0%, #ff7b4d 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 3rem;
+
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            margin: 2rem 0;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border: none;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .content-card h2 {
+            margin-top: 0;
+        }
+
+        /* Step Container */
+        .step-container {
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .step-container:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background-color: var(--accent);
+            color: var(--primary);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: 700;
+            margin-right: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-image {
+            width: 100%;
+            border-radius: var(--border-radius-md);
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .step-image:hover {
+            transform: scale(1.01);
+        }
+
+        .warning-note {
+            background-color: rgba(255, 55, 42, 0.15);
+            border-left: 4px solid rgba(255, 55, 42, 0.75);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin: 1.5rem 0;
+        }
+
+        .warning-note h3 {
+            color: #ff372a;
+            padding-left: 0;
+        }
+
+        .warning-note h3::before {
+            display: none;
+        }
+        
+        
+        
+ 
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            color: var(--primary);
+        }
+
+        .heart-icon {
+            color: #f54e00;
+            margin: 0 0.25rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            h3 {
+                font-size: 1.25rem;
+            }
+            
+            .content-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.75rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--scroll-box-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--scroll-thumb-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-header">Wait for it...</div>
+        <div class="progress"></div>
+    </div>
+
+   
+   
+   
+   
+   
+   <!-- Header -->
+    <header class="header">
+        <div class="header-logo">
+            <i class="fas fa-shield-alt logo-icon"></i>
+            <div class="logo-text">Sentinel <span></span></div>
+        </div>
+        
+        
+        
+        <div class="header-actions">
+            <a href="dashboard.html" class="btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <button class="btn-primary" id="printGuideBtn">
+                <i class="fas fa-print"></i> Print Guide
+            </button>
+        </div>
+    </header>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">How to Delete Your Personal Activity or Data From Google Securely</h1>
+            <p class="hero-subtitle">A comprehensive step-by-step guide to manage and remove your Google activity data effectively. This procedure is recommended for <strong>Google Personal Accounts</strong>.</p>
+            
+            <!-- Video Tutorial -->
+            <div class="video-container">
+                <iframe src="https://embed.app.guidde.com/playbooks/9AYpxNPTZ19ZTJ423en6aS?" title="Delete Your Personal Activity or Data From Google Securely" frameborder="0" referrerpolicy="unsafe-url" allowfullscreen="true" allow="clipboard-write" sandbox="allow-popups allow-popups-to-escape-sandbox allow-scripts allow-forms allow-same-origin allow-presentation"></iframe>
+            </div>
+        </section>
+
+        <!-- Guide Content -->
+        <div class="content-card">
+            <p>This tutorial explains how to delete your personal data from your Google account. First, open your Chrome Browser or your preferred browser and search for Google.</p>
+            
+            <div class="step-container">
+                <h3><span class="step-number">1</span> Go to <a href="https://www.google.com" target="_blank">www.google.com</a></h3>
+                <p>You will learn the necessary steps to manage and remove your activity data effectively. This procedure is recommended for "<strong>Google Personal Accounts</strong>"</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png" alt="Introduction" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">2</span> Open Google Homepage</h3>
+                <p>Open the Google homepage and click on your profile picture to begin managing your account settings.</p>
+                <div class="warning-note">
+                    <h3>N.B.</h3>
+                    <p><strong>Make sure you are logged into your "Personal Google Account".</strong></p>
+                </div>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/3.png" alt="Open Google Homepage" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">3</span> Access Google Account Settings</h3>
+                <p>Click "Manage your Google Account" to open your account management page.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/4.png" alt="Access Google Account Settings" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">4</span> Navigate to Account Management</h3>
+                <p>Switch to the myaccount.google.com page to access detailed account controls.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/5.png" alt="Navigate to Account Management" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">5</span> Open Account Search Feature</h3>
+                <p>Click "Search Google Account" to find specific settings and options.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/6.png" alt="Open Account Search Feature" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">6</span> Enter Search Query</h3>
+                <p>Enter your search query for "My Google Activity" to locate your activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/7.png" alt="Enter Search Query" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">7</span> Select Data & Privacy Section</h3>
+                <p>Click "My Activity" under the Data & privacy section to view your activity records.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/8.png" alt="Select Data & Privacy Section" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">8</span> Go to My Activity Page</h3>
+                <p>Switch to myactivity.google.com to manage your Google activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/9.png" alt="Go to My Activity Page" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">9</span> Open Activity Controls</h3>
+                <p>Click the appropriate area to access your activity controls and settings.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/10.png" alt="Open Activity Controls" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">10</span> Access Delete Options</h3>
+                <p>Click the option that allows you to delete your activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/11.png" alt="Access Delete Options" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">11</span> Review Deletion Steps</h3>
+                <p>Click "3 steps" to review the process for deleting your Google activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/12.png" alt="Review Deletion Steps" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">12</span> Proceed to Next Step</h3>
+                <p>Click "Next" to continue with the data deletion process.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/13.png" alt="Proceed to Next Step" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">13</span> Confirm Deletion Access</h3>
+                <p>Click the designated area to confirm your intent to delete data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/14.png" alt="Confirm Deletion Access" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">14</span> Initiate Data Deletion</h3>
+                <p>Click "Delete" to remove your selected Google activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/15.png" alt="Initiate Data Deletion" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">15</span> Acknowledge Deletion Notice</h3>
+                <p>Click "Got it" to acknowledge the confirmation message about data deletion.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/16.png" alt="Acknowledge Deletion Notice" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">16</span> Open Activity Settings</h3>
+                <p>Click the relevant area to access your activity settings for further management.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/17.png" alt="Open Activity Settings" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">17</span> Enable Activity Controls</h3>
+                <p>Click "On" to enable activity controls that manage data collection.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/18.png" alt="Enable Activity Controls" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">18</span> Disable Activity Tracking</h3>
+                <p>Click "Turn off" to stop Google from saving your activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/19.png" alt="Disable Activity Tracking" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">19</span> Access Confirmation Dialog</h3>
+                <p>Click the area to open the confirmation dialog for turning off activity tracking.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/20.png" alt="Access Confirmation Dialog" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">20</span> Confirm Settings Change</h3>
+                <p>Click "Got it" to confirm that activity tracking has been turned off.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/21.png" alt="Confirm Settings Change" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">21</span> Open Additional Options</h3>
+                <p>Click the designated area to access more options related to your activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/22.png" alt="Open Additional Options" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">22</span> Dismiss Notifications</h3>
+                <p>Click "Dismiss" to close any notifications or alerts related to your activity data.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/23.png" alt="Dismiss Notifications" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">23</span> Access Time Range Settings</h3>
+                <p>Click the area to open settings for selecting the time range of data to delete.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/24.png" alt="Access Time Range Settings" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">24</span> Select All Time Range</h3>
+                <p>Click "All time" to choose the entire history of your Google activity data for deletion.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/25.png" alt="Select All Time Range" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">25</span> Confirm Data Deletion</h3>
+                <p>Click "Delete" to permanently remove your Google activity data for the selected time range.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/26.png" alt="Confirm Data Deletion" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">26</span> Acknowledge Completion</h3>
+                <p>Click "Got it" to confirm that your data deletion process is complete.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png" alt="Acknowledge Completion" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">27</span> Completion</h3>
+                <p>You have successfully deleted your Google activity data and disabled activity tracking. To maintain your privacy, consider reviewing other Google account settings and managing data collection preferences regularly.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            <a href="https://www.bebelldigitalsolutions.com" rel="noreferrer" target="_blank">
+                Powered with <i class="fas fa-heart heart-icon"></i> by <strong>Bebell Digital Solutions</strong>
+            </a>
+        </p>
+    </footer>
+
+
+    
+
+    <script>
+        // Page Loader
+        document.addEventListener('DOMContentLoaded', function() {
+            const pageLoader = document.getElementById('pageLoader');
+            
+            // Hide loader after 1.5 seconds
+            setTimeout(() => {
+                pageLoader.classList.add('hidden');
+                setTimeout(() => {
+                    pageLoader.style.display = 'none';
+                }, 300);
+            }, 1500);
+            
+
+            
+            // Print Guide Button
+            const printGuideBtn = document.getElementById('printGuideBtn');
+            printGuideBtn.addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Image error handling
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('error', function() {
+                    this.alt = 'Image not available';
+                    this.style.border = '1px solid var(--border)';
+                    this.style.padding = '20px';
+                    this.style.backgroundColor = 'var(--bg-input)';
+                });
+            });
+            
+            // Add step counter for printing
+            const stepContainers = document.querySelectorAll('.step-container');
+            stepContainers.forEach((container, index) => {
+                const stepNumber = container.querySelector('.step-number');
+                if (stepNumber) {
+                    stepNumber.textContent = index + 1;
+                }
+            });
+        });
+    </script>
+    
+    
+    
+  
+<!-- Widget BACK-TO-TOP -->
+<script>
+// Create Back-to-Top Button Dynamically
+document.addEventListener("DOMContentLoaded", function () {
+    // Create the button container
+    const backToTop = document.createElement("div");
+    backToTop.id = "back-to-top";
+    backToTop.style.position = "fixed";
+    backToTop.style.bottom = "20px";
+    backToTop.style.right = "20px";
+    backToTop.style.display = "none";
+    backToTop.style.cursor = "pointer";
+    backToTop.style.zIndex = "9999";
+
+    // Create the image inside the button
+    const backToTopImg = document.createElement("img");
+    backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
+    backToTopImg.alt = "Volver arriba";
+    backToTopImg.style.width = "40px";
+    backToTopImg.style.height = "40px";
+
+    // Append image to the button
+    backToTop.appendChild(backToTopImg);
+
+    // Append button to the body
+    document.body.appendChild(backToTop);
+
+    // Scroll Event Listener
+    window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            backToTop.style.display = "block";
+        } else {
+            backToTop.style.display = "none";
+        }
+    });
+
+    // Click Event for Scrolling to Top
+    backToTop.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+});
+</script>
+<!-- End Widget BACK-TO-TOP -->
+  
+    
+    
+    
+    
+    
+</body>
+</html>
