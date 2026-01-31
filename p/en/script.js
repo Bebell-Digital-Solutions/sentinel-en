@@ -122,31 +122,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Create Back-to-Top Button Dynamically
-    const backToTop = document.createElement("div");
-    backToTop.id = "back-to-top";
-    
-    const backToTopImg = document.createElement("img");
-    backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
-    backToTopImg.alt = "Back to top";
-    
-    backToTop.appendChild(backToTopImg);
-    document.body.appendChild(backToTop);
-    
-    // Scroll Event Listener for Back-to-Top
-    window.addEventListener("scroll", function () {
-        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            backToTop.style.display = "block";
-        } else {
-            backToTop.style.display = "none";
-        }
-    });
-    
-    // Click Event for Scrolling to Top
-    backToTop.addEventListener("click", function () {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    });
-});
