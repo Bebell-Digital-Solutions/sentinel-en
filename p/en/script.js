@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const carouselTrack = document.getElementById('carouselTrack');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
-    const printGuideBtn = document.getElementById('printGuideBtn');
     
     let currentSlide = 0;
     const totalSlides = carouselSlides.length;
@@ -95,10 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize carousel
     initCarousel();
     
-    // Print Guide Button
-    printGuideBtn.addEventListener('click', function() {
-        window.print();
-    });
+
     
     // Image error handling for step images
     const images = document.querySelectorAll('img');
@@ -113,14 +109,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Resize handler for carousel
     window.addEventListener('resize', updateCarousel);
     
-    // Add step counter for printing
-    const stepContainers = document.querySelectorAll('.step-container');
-    stepContainers.forEach((container, index) => {
-        const stepNumber = container.querySelector('.step-number');
-        if (stepNumber) {
-            stepNumber.textContent = index + 1;
-        }
-    });
+
 
     });
 
