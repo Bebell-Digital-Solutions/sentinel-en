@@ -1,1097 +1,476 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delete Google Data - Security & Privacy Hub</title>
+    <title>Eliminar Datos de Google - Centro de Seguridad y Privacidad</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        /* --- Theme Variables (Dark Mode Only) --- */
-        :root {
-            --skin-color: #ff5011;        /* Primary Accent (Orange) */
-            --mirage-color: hsl(210, 10%, 23%);  /* Secondary/Dark Gray */
-            --title-color: hsl(242, 8%, 98%);    /* Near White */
-            --text-color: hsl(242, 8%, 80%);     /* Light Gray */
-            --body-color: #0d0d0d;               /* Almost Black Background */
-            --box-color: hsl(242, 14%, 12%);     /* Card Background */
-            
-            --primary: var(--skin-color);
-            --secondary: var(--mirage-color);
-            
-            --bg-body: var(--body-color);
-            --bg-card: var(--box-color);
-            --bg-input: hsl(242, 14%, 16%);
-            
-            --text-main: var(--title-color);
-            --text-muted: var(--text-color);
-            --text-inverse: #ffffff;
-            
-            --border: var(--mirage-color);
-            --accent: rgba(255, 80, 17, 0.15);   /* Semi-transparent Orange */
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            
-            --border-radius-sm: 0.5rem;
-            --border-radius-md: 0.75rem;
-            --border-radius-lg: 1rem;
-            --body-font: 'Inter', sans-serif;
-            
-            --chart-pending: #ef4444;
-            --chart-completed: #ff5011;
-
-            --scroll-box-color: var(--mirage-color);
-            --scroll-thumb-color: var(--skin-color);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        *:focus {
-            outline: none;
-        }
-
-        *:focus-visible {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 20px;
-        }
-
-        body {
-            font-family: var(--body-font);
-            background-color: var(--bg-body);
-            color: var(--text-muted);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            color: var(--text-main);
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        h2 {
-            font-size: 2rem;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        h3 {
-            font-size: 1.5rem;
-            margin-top: 1.5rem;
-            margin-bottom: 0.75rem;
-            position: relative;
-            padding-left: 1rem;
-        }
-
-        h3::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 4px;
-            background-color: var(--primary);
-            border-radius: 2px;
-        }
-
-        p {
-            margin-bottom: 1rem;
-        }
-
-        a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: #ff7b4d;
-            text-decoration: underline;
-        }
-
-        /* Page Loader */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--body-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
-        }
-
-        .loader-header {
-            color: var(--title-color);
-            font-size: 24px;
-            font-family: var(--body-font);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .progress {
-            width: 272.8px;
-            height: 41.7px;
-            border-radius: 28.8px;
-            color: var(--skin-color);
-            background-color: var(--box-color);
-            border: 2.9px solid;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress::before {
-            content: "";
-            position: absolute;
-            margin: 2.9px;
-            inset: 0 100% 0 0;
-            border-radius: inherit;
-            background: currentColor;
-            animation: progress-pf82op 1.5s forwards;
-        }
-
-        @keyframes progress-pf82op {
-            100% {
-                inset: 0;
-            }
-        }
-
-        .page-loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Header */
-        .header {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 1.5rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow);
-        }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .logo-icon {
-            color: var(--primary);
-            font-size: 1.75rem;
-        }
-
-        .logo-text {
-            color: var(--text-main);
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .logo-text span {
-            color: var(--primary);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius-sm);
-            font-weight: 600;
-            transition: all 0.2s;
-            cursor: pointer;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 80, 17, 0.3);
-            text-decoration: none;
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding: 2rem;
-            background-color: var(--bg-card);
-            border-radius: var(--border-radius-lg);
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: var(--shadow);
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--primary) 0%, #ff7b4d 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            line-height: 3rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 800px;
-            margin: 0 auto 2rem;
-        }
-        
-        
-        
-        
-        
-
-        /* Portfolio Carousel */
-        .portfolio-carousel {
-            background: var(--box-color);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--mirage-color);
-            box-shadow: var(--shadow);
-            margin-bottom: 2rem;
-        }
-        .portfolio-carousel h2 { 
-            color: var(--title-color); 
-            text-align: center; 
-            margin-bottom: 2rem; 
-            font-size: 2rem; 
-        }
-        .carousel-container { 
-            position: relative; 
-            width: 100%; 
-            margin: 0 auto; 
-            overflow: hidden; 
-            border-radius: 8px; 
-        }
-        .carousel-track { 
-            display: flex; 
-            transition: transform 0.5s ease-in-out; 
-        }
-        .carousel-slide { 
-            min-width: 100%; 
-            box-sizing: border-box; 
-        }
-        .carousel-slide img { 
-            width: 100%; 
-            height: auto;
-            display: block; 
-            border-radius: 8px;
-        }
-        .carousel-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: rgba(13, 13, 13, 0.7);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 10;
-            transition: all 0.3s ease;
-        }
-        .carousel-button:hover {
-            background-color: rgba(255, 80, 17, 0.9);
-            transform: translateY(-50%) scale(1.1);
-        }
-        .prev-button { left: 10px; }
-        .next-button { right: 10px; }
-
-
-
-
-
-
-
-        /* Content Card */
-        .content-card {
-            background: var(--bg-card);
-            border-radius: var(--border-radius-lg);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .content-card h2 {
-            margin-top: 0;
-        }
-
-
-
-
-
-
-
-        /* Step Container */
-        .step-container {
-            margin-bottom: 2.5rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .step-container:last-of-type {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .step-number {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            background-color: var(--accent);
-            color: var(--primary);
-            border-radius: 50%;
-            text-align: center;
-            line-height: 36px;
-            font-weight: 700;
-            margin-right: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .step-image {
-            width: 100%;
-            border-radius: var(--border-radius-md);
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease;
-        }
-
-        .step-image:hover {
-            transform: scale(1.01);
-        }
-
-        .warning-note {
-            background-color: rgba(255, 55, 42, 0.15);
-            border-left: 4px solid rgba(255, 55, 42, 0.75);
-            padding: 1rem;
-            border-radius: var(--border-radius-sm);
-            margin: 1.5rem 0;
-        }
-
-        .warning-note h3 {
-            color: #ff372a;
-            padding-left: 0;
-        }
-
-        .warning-note h3::before {
-            display: none;
-        }
-
-
-
-
-
-
-
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .footer a {
-            color: var(--text-main);
-            font-weight: 600;
-        }
-
-        .footer a:hover {
-            color: var(--primary);
-        }
-
-        .heart-icon {
-            color: #f54e00;
-            margin: 0 0.25rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .main-content {
-                padding: 1rem;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            h2 {
-                font-size: 1.75rem;
-            }
-            
-            h3 {
-                font-size: 1.25rem;
-            }
-            
-            .content-card {
-                padding: 1.5rem;
-            }
-            
-            .portfolio-carousel {
-                padding: 1rem;
-            }
-            
-            .carousel-button {
-                padding: 0.3rem 0.6rem;
-                font-size: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 1.75rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            .header-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .btn-primary {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--scroll-box-color);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--scroll-thumb-color);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <!-- Iconos Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/bb6d550f9b7a6643eff984e7eb1c932ff997f664.png">
+
+    
 </head>
 <body>
-    <!-- Page Loader -->
+
+
+
+    <!-- Cargador de Página -->
     <div class="page-loader" id="pageLoader">
-        <div class="loader-header">Wait for it...</div>
+        <div class="loader-header">Espera un momento...</div>
         <div class="progress"></div>
     </div>
     
     
-    
-    
-    
 
-    <!-- Header -->
+
+
+
+
+
+
+    
+    <!-- Cabecera -->
     <header class="header">
         <div class="header-logo">
             <i class="fas fa-shield-alt logo-icon"></i>
             <div class="logo-text">Sentinel<span></span></div>
         </div>
+
+        
         <div class="header-actions">
-            <a href="dashboard.html" class="btn-primary">
-                <i class="fas fa-arrow-left"></i> Volver al tablero
+
+            
+            <a href="/security-dashboard" class="btn-primary">
+                <i class="fas fa-arrow-left"></i> Volver al Panel
             </a>
-            <button class="btn-primary" id="printGuideBtn">
-                <i class="fas fa-print"></i> Imprimir Guía
-            </button>
+
+            
+<!-- Descargar archivo PDF -->
+        <!-- Enlace directo al PDF (sin necesidad de JavaScript) -->
+        <a href="/security-dashboard/pdfs/google-data-guide.pdf" target="_blank" class="btn-primary">
+            <i class="fas fa-print"></i> Imprimir Guía
+        </a>
+
+
+            
+
         </div>
     </header>
     
-   
-
-<!-- Contenido Principal -->
-<main class="main-content">
 
 
-    <!-- Sección Hero -->
-    <section class="hero-section">
-        <h1 class="hero-title">Cómo Eliminar Tu Actividad o Datos Personales de Google de Forma Segura</h1>
-        <p class="hero-subtitle">Una guía completa paso a paso para gestionar y eliminar tus datos de actividad de Google de manera efectiva. Este procedimiento se recomienda para <strong>Cuentas Personales de Google</strong>.</p>
+
+
+    
+    <!-- Contenido Principal -->
+    <main class="main-content">
+        
+        
+        <!-- Sección Hero -->
+        <section class="hero-section">
+            <h1 class="hero-title">Cómo Eliminar Tu Actividad Personal o Datos de Google de Forma Segura</h1>
+            <p class="hero-subtitle">Una guía completa paso a paso para gestionar y eliminar tus datos de actividad de Google de manera efectiva. Este procedimiento se recomienda para <strong>Cuentas Personales de Google</strong>.</p>
 
 
         <!-- Carrusel de Portafolio -->
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                <!-- Las 28 diapositivas serán insertadas aquí por JavaScript -->
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    <!-- Las 28 diapositivas se insertarán aquí mediante JavaScript -->
+                </div>
+                <button class="carousel-button prev-button" id="prevButton" aria-label="Diapositiva Anterior"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-button next-button" id="nextButton" aria-label="Diapositiva Siguiente"><i class="fas fa-chevron-right"></i></button>
             </div>
-            <button class="carousel-button prev-button" id="prevButton" aria-label="Diapositiva Anterior"><i class="fas fa-chevron-left"></i></button>
-            <button class="carousel-button next-button" id="nextButton" aria-label="Diapositiva Siguiente"><i class="fas fa-chevron-right"></i></button>
-        </div>
-    </section>
+        </section>
 
 
 
-    <!-- Contenido de la Guía -->
-    <div class="content-card">
-        <p>Este tutorial explica cómo eliminar tus datos personales de tu cuenta de Google. Primero, abre tu navegador Chrome o tu navegador preferido y busca Google.</p>
-
-        <!-- Paso 1 -->
-        <div class="step-container">
-            <h3><span class="step-number">1</span> Ir a <a href="https://www.google.com" target="_blank">www.google.com</a></h3>
-            <p>Aprenderás los pasos necesarios para gestionar y eliminar tus datos de actividad de manera efectiva. Este procedimiento se recomienda para "<strong>Cuentas Personales de Google</strong>".</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png" alt="Introducción" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">2</span> Abrir la Página Principal de Google</h3>
-            <p>Abre la página principal de Google y haz clic en tu foto de perfil para comenzar a gestionar la configuración de tu cuenta.</p>
-            <div class="warning-note">
-                <h3>N.B.</h3>
-                <p><strong>Asegúrate de haber iniciado sesión en tu "Cuenta Personal de Google".</strong></p>
+        <!-- Contenido de la Guía -->
+        <div class="content-card">
+            <p>Este tutorial explica cómo eliminar tus datos personales de tu cuenta de Google. Primero, abre tu navegador Chrome o tu navegador preferido y busca Google.</p>
+            
+            <!-- Paso 1 -->
+                     <div class="step-container">
+                <h3><span class="step-number">1</span> Ir a <a href="https://www.google.com" target="_blank">www.google.com</a></h3>
+                <p>Aprenderás los pasos necesarios para gestionar y eliminar tus datos de actividad de manera efectiva. Este procedimiento se recomienda para "<strong>Cuentas Personales de Google</strong>"</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png" alt="Introducción" />
             </div>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/3.png" alt="Abrir Página Principal de Google" />
+
+            <div class="step-container">
+                <h3><span class="step-number">2</span> Abrir la Página de Inicio de Google</h3>
+                <p>Abre la página de inicio de Google y haz clic en tu foto de perfil para comenzar a gestionar la configuración de tu cuenta.</p>
+                <div class="warning-note">
+                    <h3>N.B.</h3>
+                    <p><strong>Asegúrate de haber iniciado sesión en tu "Cuenta Personal de Google".</strong></p>
+                </div>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/3.png" alt="Abrir Página de Inicio de Google" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">3</span> Acceder a la Configuración de la Cuenta de Google</h3>
+                <p>Haz clic en "Gestionar tu Cuenta de Google" para abrir la página de administración de tu cuenta.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/4.png" alt="Acceder a Configuración de Cuenta Google" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">4</span> Navegar a la Gestión de la Cuenta</h3>
+                <p>Cambia a la página myaccount.google.com para acceder a los controles detallados de la cuenta.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/5.png" alt="Navegar a Gestión de Cuenta" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">5</span> Abrir la Función de Búsqueda de Cuenta</h3>
+                <p>Haz clic en "Buscar en Cuenta de Google" para encontrar configuraciones y opciones específicas.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/6.png" alt="Abrir Función de Búsqueda de Cuenta" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">6</span> Ingresar Término de Búsqueda</h3>
+                <p>Ingresa tu término de búsqueda para "Mi Actividad de Google" para localizar tus datos de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/7.png" alt="Ingresar Término de Búsqueda" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">7</span> Seleccionar la Sección de Datos y Privacidad</h3>
+                <p>Haz clic en "Mi Actividad" en la sección de Datos y privacidad para ver tus registros de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/8.png" alt="Seleccionar Sección Datos y Privacidad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">8</span> Ir a la Página Mi Actividad</h3>
+                <p>Cambia a myactivity.google.com para gestionar tus datos de actividad de Google.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/9.png" alt="Ir a Página Mi Actividad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">9</span> Abrir Controles de Actividad</h3>
+                <p>Haz clic en el área correspondiente para acceder a tus controles y configuraciones de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/10-slide.png" alt="Abrir Controles de Actividad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">10</span> Acceder a Opciones de Eliminación</h3>
+                <p>Haz clic en la opción que te permite eliminar tus datos de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/11.png" alt="Acceder a Opciones de Eliminación" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">11</span> Revisar los Pasos de Eliminación</h3>
+                <p>Haz clic en "3 pasos" para revisar el proceso de eliminación de tus datos de actividad de Google.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/12.png" alt="Revisar Pasos de Eliminación" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">12</span> Proceder al Siguiente Paso</h3>
+                <p>Haz clic en "Siguiente" para continuar con el proceso de eliminación de datos.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/13.png" alt="Proceder al Siguiente Paso" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">13</span> Confirmar Acceso a Eliminación</h3>
+                <p>Haz clic en el área designada para confirmar tu intención de eliminar datos.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/14.png" alt="Confirmar Acceso a Eliminación" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">14</span> Iniciar Eliminación de Datos</h3>
+                <p>Haz clic en "Eliminar" para quitar tus datos de actividad de Google seleccionados.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/15.png" alt="Iniciar Eliminación de Datos" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">15</span> Reconocer Aviso de Eliminación</h3>
+                <p>Haz clic en "Entendido" para reconocer el mensaje de confirmación sobre la eliminación de datos.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/16.png" alt="Reconocer Aviso de Eliminación" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">16</span> Abrir Configuración de Actividad</h3>
+                <p>Haz clic en el área relevante para acceder a la configuración de tu actividad para una gestión posterior.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/17.png" alt="Abrir Configuración de Actividad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">17</span> Activar Controles de Actividad</h3>
+                <p>Haz clic en "Activado" para habilitar los controles de actividad que gestionan la recolección de datos.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/18.png" alt="Activar Controles de Actividad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">18</span> Desactivar Rastreo de Actividad</h3>
+                <p>Haz clic en "Desactivar" para impedir que Google guarde tus datos de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/19.png" alt="Desactivar Rastreo de Actividad" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">19</span> Acceder al Cuadro de Diálogo de Confirmación</h3>
+                <p>Haz clic en el área para abrir el cuadro de diálogo de confirmación para desactivar el rastreo de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/20.png" alt="Acceder al Cuadro de Diálogo de Confirmación" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">20</span> Confirmar Cambio de Configuración</h3>
+                <p>Haz clic en "Entendido" para confirmar que el rastreo de actividad ha sido desactivado.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/21.png" alt="Confirmar Cambio de Configuración" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">21</span> Abrir Opciones Adicionales</h3>
+                <p>Haz clic en el área designada para acceder a más opciones relacionadas con tus datos de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/22.png" alt="Abrir Opciones Adicionales" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">22</span> Descartar Notificaciones</h3>
+                <p>Haz clic en "Descartar" para cerrar cualquier notificación o alerta relacionada con tus datos de actividad.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/23.png" alt="Descartar Notificaciones" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">23</span> Acceder a Configuración de Rango de Tiempo</h3>
+                <p>Haz clic en el área para abrir la configuración para seleccionar el rango de tiempo de los datos a eliminar.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/24.png" alt="Acceder a Configuración de Rango de Tiempo" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">24</span> Seleccionar Rango de Tiempo "Todo el Tiempo"</h3>
+                <p>Haz clic en "Todo el tiempo" para elegir todo el historial de tus datos de actividad de Google para su eliminación.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/25.png" alt="Seleccionar Rango de Tiempo Todo el Tiempo" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">25</span> Confirmar Eliminación de Datos</h3>
+                <p>Haz clic en "Eliminar" para eliminar permanentemente tus datos de actividad de Google del rango de tiempo seleccionado.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/26.png" alt="Confirmar Eliminación de Datos" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">26</span> Reconocer Finalización</h3>
+                <p>Haz clic en "Entendido" para confirmar que tu proceso de eliminación de datos ha finalizado.</p>
+                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/27.png?updatedAt=1769831677556" alt="Reconocer Finalización" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">27</span> Finalización</h3>
+                <p>Has eliminado con éxito tus datos de actividad de Google y has desactivado el rastreo de actividad. Para mantener tu privacidad, considera revisar otras configuraciones de tu cuenta de Google y gestionar las preferencias de recolección de datos regularmente.</p>
+                                <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png" alt="Portada Final" />
+            </div>
         </div>
+    </main>
 
-        <div class="step-container">
-            <h3><span class="step-number">3</span> Acceder a la Configuración de la Cuenta de Google</h3>
-            <p>Haz clic en "Gestionar tu Cuenta de Google" para abrir la página de administración de tu cuenta.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/4.png" alt="Acceder a Configuración de Cuenta de Google" />
-        </div>
+    <!-- Pie de Página -->
+    <footer class="footer">
+        <p>
+            <a href="https://www.bebelldigitalsolutions.com" rel="noreferrer" target="_blank">
+                Con la tecnología de <i class="fas fa-heart heart-icon"></i> por <strong>Bebell Digital Solutions</strong>
+            </a>
+        </p>
+    </footer>
 
-        <div class="step-container">
-            <h3><span class="step-number">4</span> Navegar a la Gestión de Cuenta</h3>
-            <p>Cambia a la página myaccount.google.com para acceder a los controles detallados de la cuenta.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/5.png" alt="Navegar a Gestión de Cuenta" />
-        </div>
 
-        <div class="step-container">
-            <h3><span class="step-number">5</span> Abrir la Función de Búsqueda de Cuenta</h3>
-            <p>Haz clic en "Buscar en Cuenta de Google" para encontrar configuraciones y opciones específicas.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/6.png" alt="Abrir Función de Búsqueda de Cuenta" />
-        </div>
+    <script src="script.js"></script>
 
-        <div class="step-container">
-            <h3><span class="step-number">6</span> Ingresar Término de Búsqueda</h3>
-            <p>Ingresa tu término de búsqueda para "Mi Actividad de Google" para ubicar tus datos de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/7.png" alt="Ingresar Término de Búsqueda" />
-        </div>
 
-        <div class="step-container">
-            <h3><span class="step-number">7</span> Seleccionar la Sección Datos y Privacidad</h3>
-            <p>Haz clic en "Mi Actividad" en la sección Datos y privacidad para ver tus registros de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/8.png" alt="Seleccionar Sección Datos y Privacidad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">8</span> Ir a la Página Mi Actividad</h3>
-            <p>Cambia a myactivity.google.com para gestionar tus datos de actividad de Google.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/9.png" alt="Ir a la Página Mi Actividad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">9</span> Abrir Controles de Actividad</h3>
-            <p>Haz clic en el área correspondiente para acceder a tus controles y configuraciones de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/10.png" alt="Abrir Controles de Actividad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">10</span> Acceder a Opciones de Eliminación</h3>
-            <p>Haz clic en la opción que te permita eliminar tus datos de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/11.png" alt="Acceder a Opciones de Eliminación" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">11</span> Revisar Pasos de Eliminación</h3>
-            <p>Haz clic en "3 pasos" para revisar el proceso para eliminar tus datos de actividad de Google.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/12.png" alt="Revisar Pasos de Eliminación" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">12</span> Proceder al Siguiente Paso</h3>
-            <p>Haz clic en "Siguiente" para continuar con el proceso de eliminación de datos.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/13.png" alt="Proceder al Siguiente Paso" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">13</span> Confirmar Acceso a Eliminación</h3>
-            <p>Haz clic en el área designada para confirmar tu intención de eliminar datos.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/14.png" alt="Confirmar Acceso a Eliminación" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">14</span> Iniciar Eliminación de Datos</h3>
-            <p>Haz clic en "Eliminar" para eliminar los datos de actividad de Google seleccionados.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/15.png" alt="Iniciar Eliminación de Datos" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">15</span> Confirmar Aviso de Eliminación</h3>
-            <p>Haz clic en "Entendido" para confirmar el mensaje sobre la eliminación de datos.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/16.png" alt="Confirmar Aviso de Eliminación" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">16</span> Abrir Configuración de Actividad</h3>
-            <p>Haz clic en el área correspondiente para acceder a la configuración de tu actividad para una gestión posterior.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/17.png" alt="Abrir Configuración de Actividad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">17</span> Activar Controles de Actividad</h3>
-            <p>Haz clic en "Activado" para habilitar los controles de actividad que gestionan la recolección de datos.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/18.png" alt="Activar Controles de Actividad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">18</span> Desactivar Seguimiento de Actividad</h3>
-            <p>Haz clic en "Desactivar" para evitar que Google guarde tus datos de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/19.png" alt="Desactivar Seguimiento de Actividad" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">19</span> Acceder al Diálogo de Confirmación</h3>
-            <p>Haz clic en el área para abrir el diálogo de confirmación para desactivar el seguimiento de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/20.png" alt="Acceder al Diálogo de Confirmación" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">20</span> Confirmar Cambio de Configuración</h3>
-            <p>Haz clic en "Entendido" para confirmar que el seguimiento de actividad ha sido desactivado.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/21.png" alt="Confirmar Cambio de Configuración" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">21</span> Abrir Opciones Adicionales</h3>
-            <p>Haz clic en el área designada para acceder a más opciones relacionadas con tus datos de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/22.png" alt="Abrir Opciones Adicionales" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">22</span> Descartar Notificaciones</h3>
-            <p>Haz clic en "Descartar" para cerrar cualquier notificación o alerta relacionada con tus datos de actividad.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/23.png" alt="Descartar Notificaciones" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">23</span> Acceder a Configuración de Rango de Tiempo</h3>
-            <p>Haz clic en el área para abrir la configuración para seleccionar el rango de tiempo de los datos a eliminar.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/24.png" alt="Acceder a Configuración de Rango de Tiempo" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">24</span> Seleccionar Rango de Tiempo "Todo el Tiempo"</h3>
-            <p>Haz clic en "Todo el tiempo" para elegir todo el historial de tus datos de actividad de Google para eliminación.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/25.png" alt="Seleccionar Rango de Tiempo Todo el Tiempo" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">25</span> Confirmar Eliminación de Datos</h3>
-            <p>Haz clic en "Eliminar" para eliminar permanentemente tus datos de actividad de Google para el rango de tiempo seleccionado.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/26.png" alt="Confirmar Eliminación de Datos" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">26</span> Confirmar Finalización</h3>
-            <p>Haz clic en "Entendido" para confirmar que tu proceso de eliminación de datos está completo.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/27.png?updatedAt=1769831677556" alt="Confirmar Finalización" />
-        </div>
-
-        <div class="step-container">
-            <h3><span class="step-number">27</span> Finalización</h3>
-            <p>Has eliminado con éxito tus datos de actividad de Google y desactivado el seguimiento de actividad. Para mantener tu privacidad, considera revisar otras configuraciones de tu cuenta de Google y gestionar las preferencias de recolección de datos regularmente.</p>
-            <img class="step-image" src="https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png" alt="Portada Final" />
-        </div>
-    </div>
-</main>
-
-<!-- Pie de Página -->
-<footer class="footer">
-    <p>
-        <a href="https://www.bebelldigitalsolutions.com" rel="noreferrer" target="_blank">
-            Potenciado con <i class="fas fa-heart heart-icon"></i> por <strong>Bebell Digital Solutions</strong>
-        </a>
-    </p>
-</footer>
-    
-    
-    
-    
-    <script>
-        // Carousel Data - All 28 steps
-        const carouselSlides = [
-            {
-                id: 0,
-                title: "Cover",
-                description: "This tutorial explains how to delete your personal data from your Google account.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/1.png?updatedAt=1769831677548"
-            },
-            {
-                id: 1,
-                title: "Introduction",
-                description: "This tutorial explains how to delete your personal data from your Google account.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png"
-            },
-            {
-                id: 2,
-                title: "Open Google Homepage",
-                description: "Open the Google homepage and click on your profile picture to begin managing your account settings.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/3.png"
-            },
-            {
-                id: 3,
-                title: "Access Google Account Settings",
-                description: "Click 'Manage your Google Account' to open your account management page.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/4.png"
-            },
-            {
-                id: 4,
-                title: "Navigate to Account Management",
-                description: "Switch to the myaccount.google.com page to access detailed account controls.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/5.png"
-            },
-            {
-                id: 5,
-                title: "Open Account Search Feature",
-                description: "Click 'Search Google Account' to find specific settings and options.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/6.png"
-            },
-            {
-                id: 6,
-                title: "Enter Search Query",
-                description: "Enter your search query for 'My Google Activity' to locate your activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/7.png"
-            },
-            {
-                id: 7,
-                title: "Select Data & Privacy Section",
-                description: "Click 'My Activity' under the Data & privacy section to view your activity records.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/8.png"
-            },
-            {
-                id: 8,
-                title: "Go to My Activity Page",
-                description: "Switch to myactivity.google.com to manage your Google activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/9.png"
-            },
-            {
-                id: 9,
-                title: "Open Activity Controls",
-                description: "Click the appropriate area to access your activity controls and settings.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/10.png"
-            },
-            {
-                id: 10,
-                title: "Access Delete Options",
-                description: "Click the option that allows you to delete your activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/11.png"
-            },
-            {
-                id: 11,
-                title: "Review Deletion Steps",
-                description: "Click '3 steps' to review the process for deleting your Google activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/12.png"
-            },
-            {
-                id: 12,
-                title: "Proceed to Next Step",
-                description: "Click 'Next' to continue with the data deletion process.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/13.png"
-            },
-            {
-                id: 13,
-                title: "Confirm Deletion Access",
-                description: "Click the designated area to confirm your intent to delete data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/14.png"
-            },
-            {
-                id: 14,
-                title: "Initiate Data Deletion",
-                description: "Click 'Delete' to remove your selected Google activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/15.png"
-            },
-            {
-                id: 15,
-                title: "Acknowledge Deletion Notice",
-                description: "Click 'Got it' to acknowledge the confirmation message about data deletion.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/16.png"
-            },
-            {
-                id: 16,
-                title: "Open Activity Settings",
-                description: "Click the relevant area to access your activity settings for further management.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/17.png"
-            },
-            {
-                id: 17,
-                title: "Enable Activity Controls",
-                description: "Click 'On' to enable activity controls that manage data collection.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/18.png"
-            },
-            {
-                id: 18,
-                title: "Disable Activity Tracking",
-                description: "Click 'Turn off' to stop Google from saving your activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/19.png"
-            },
-            {
-                id: 19,
-                title: "Access Confirmation Dialog",
-                description: "Click the area to open the confirmation dialog for turning off activity tracking.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/20.png"
-            },
-            {
-                id: 20,
-                title: "Confirm Settings Change",
-                description: "Click 'Got it' to confirm that activity tracking has been turned off.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/21.png"
-            },
-            {
-                id: 21,
-                title: "Open Additional Options",
-                description: "Click the designated area to access more options related to your activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/22.png"
-            },
-            {
-                id: 22,
-                title: "Dismiss Notifications",
-                description: "Click 'Dismiss' to close any notifications or alerts related to your activity data.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/23.png"
-            },
-            {
-                id: 23,
-                title: "Access Time Range Settings",
-                description: "Click the area to open settings for selecting the time range of data to delete.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/24.png"
-            },
-            {
-                id: 24,
-                title: "Select All Time Range",
-                description: "Click 'All time' to choose the entire history of your Google activity data for deletion.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/25.png"
-            },
-            {
-                id: 25,
-                title: "Confirm Data Deletion",
-                description: "Click 'Delete' to permanently remove your Google activity data for the selected time range.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/26.png"
-            },
-            {
-                id: 26,
-                title: "Acknowledge Completion",
-                description: "Click 'Got it' to confirm that your data deletion process is complete.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png"
-            },
-            {
-                id: 27,
-                title: "Data Deletion Complete",
-                description: "You have successfully deleted your Google activity data and disabled activity tracking.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png"
-            },
-            {
-                id: 28,
-                title: "Maintain Your Privacy",
-                description: "To maintain your privacy, consider reviewing other Google account settings regularly.",
-                image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png"
-            }
-        ];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const pageLoader = document.getElementById('pageLoader');
-            const carouselTrack = document.getElementById('carouselTrack');
-            const prevButton = document.getElementById('prevButton');
-            const nextButton = document.getElementById('nextButton');
-            const printGuideBtn = document.getElementById('printGuideBtn');
-            
-            let currentSlide = 0;
-            const totalSlides = carouselSlides.length;
-            
-            // Hide loader after 1.5 seconds
-            setTimeout(() => {
-                pageLoader.classList.add('hidden');
-                setTimeout(() => {
-                    pageLoader.style.display = 'none';
-                }, 300);
-            }, 1500);
-            
-            // Initialize Carousel
-            function initCarousel() {
-                // Clear existing content
-                carouselTrack.innerHTML = '';
-                
-                // Create slides
-                carouselSlides.forEach((slide, index) => {
-                    const slideElement = document.createElement('div');
-                    slideElement.className = 'carousel-slide';
-                    slideElement.dataset.index = index;
-                    
-                    slideElement.innerHTML = `
-                        <img src="${slide.image}" alt="${slide.alt}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"300\" viewBox=\"0 0 400 300\"></svg>
-                    `;
-                    
-                    carouselTrack.appendChild(slideElement);
-                });
-                
-                updateCarousel();
-            }
-            
-            // Update carousel position
-            function updateCarousel() {
-                const trackWidth = carouselTrack.offsetWidth;
-                carouselTrack.style.transform = `translateX(-${currentSlide * trackWidth}px)`;
-            }
-            
-            // Next slide
-            function nextSlide() {
-                if (currentSlide < totalSlides - 1) {
-                    currentSlide++;
-                } else {
-                    currentSlide = 0; // Loop back to first slide
-                }
-                updateCarousel();
-            }
-            
-            // Previous slide
-            function prevSlide() {
-                if (currentSlide > 0) {
-                    currentSlide--;
-                } else {
-                    currentSlide = totalSlides - 1; // Loop to last slide
-                }
-                updateCarousel();
-            }
-            
-            // Event listeners for carousel
-            prevButton.addEventListener('click', prevSlide);
-            nextButton.addEventListener('click', nextSlide);
-            
-            // Keyboard navigation
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') prevSlide();
-                if (e.key === 'ArrowRight') nextSlide();
-            });
-            
-            // Auto-advance carousel
-            let autoSlideInterval;
-            function startAutoSlide() {
-                autoSlideInterval = setInterval(nextSlide, 4000); // Change slide every 4 seconds
-            }
-            
-            function stopAutoSlide() {
-                clearInterval(autoSlideInterval);
-            }
-            
-            // Start auto-slide on load
-            startAutoSlide();
-            
-            // Pause auto-slide on hover
-            carouselTrack.addEventListener('mouseenter', stopAutoSlide);
-            carouselTrack.addEventListener('mouseleave', startAutoSlide);
-            
-            // Initialize carousel
-            initCarousel();
-            
-            // Back to Top Button
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    backToTopButton.classList.add('show');
-                } else {
-                    backToTopButton.classList.remove('show');
-                }
-            });
-            
-            backToTopButton.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
-            
-            // Print Guide Button
-            printGuideBtn.addEventListener('click', function() {
-                window.print();
-            });
-            
-            // Image error handling for step images
-            const images = document.querySelectorAll('img');
-            images.forEach(img => {
-                img.addEventListener('error', function() {
-                    if (!this.src.includes('data:image/svg+xml')) {
-                        this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%231a1a1a"/><text x="200" y="150" font-family="Arial" font-size="16" fill="%23808080" text-anchor="middle">Image not available</text></svg>';
-                    }
-                });
-            });
-            
-            // Resize handler for carousel
-            window.addEventListener('resize', updateCarousel);
-            
-            // Add step counter for printing
-            const stepContainers = document.querySelectorAll('.step-container');
-            stepContainers.forEach((container, index) => {
-                const stepNumber = container.querySelector('.step-number');
-                if (stepNumber) {
-                    stepNumber.textContent = index + 1;
-                }
-            });
-        });
-    </script>
-    
-    
-    
-    
-<!-- Widget BACK-TO-TOP -->
 <script>
-// Create Back-to-Top Button Dynamically
+  // Datos del Carrusel - Todos los 28 pasos
+const carouselSlides = [
+    {
+        id: 0,
+        title: "Portada",
+        description: "Este tutorial explica cómo eliminar tus datos personales de tu cuenta de Google.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/1.png?updatedAt=1769831677548"
+    },
+    {
+        id: 1,
+        title: "Introducción",
+        description: "Este tutorial explica cómo eliminar tus datos personales de tu cuenta de Google.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/2.png"
+    },
+    {
+        id: 2,
+        title: "Abrir la Página de Inicio de Google",
+        description: "Abre la página de inicio de Google y haz clic en tu foto de perfil para comenzar a gestionar la configuración de tu cuenta.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/3.png"
+    },
+    {
+        id: 3,
+        title: "Acceder a la Configuración de la Cuenta de Google",
+        description: "Haz clic en 'Gestionar tu Cuenta de Google' para abrir la página de administración de tu cuenta.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/4.png"
+    },
+    {
+        id: 4,
+        title: "Navegar a la Gestión de la Cuenta",
+        description: "Cambia a la página myaccount.google.com para acceder a los controles detallados de la cuenta.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/5.png"
+    },
+    {
+        id: 5,
+        title: "Abrir la Función de Búsqueda de Cuenta",
+        description: "Haz clic en 'Buscar en Cuenta de Google' para encontrar configuraciones y opciones específicas.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/6.png"
+    },
+    {
+        id: 6,
+        title: "Ingresar Término de Búsqueda",
+        description: "Ingresa tu término de búsqueda para 'Mi Actividad de Google' para localizar tus datos de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/7.png"
+    },
+    {
+        id: 7,
+        title: "Seleccionar la Sección de Datos y Privacidad",
+        description: "Haz clic en 'Mi Actividad' en la sección de Datos y privacidad para ver tus registros de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/8.png"
+    },
+    {
+        id: 8,
+        title: "Ir a la Página Mi Actividad",
+        description: "Cambia a myactivity.google.com para gestionar tus datos de actividad de Google.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/9.png"
+    },
+    {
+        id: 9,
+        title: "Abrir Controles de Actividad",
+        description: "Haz clic en el área correspondiente para acceder a tus controles y configuraciones de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/10-slide.png"
+    },
+    {
+        id: 10,
+        title: "Acceder a Opciones de Eliminación",
+        description: "Haz clic en la opción que te permite eliminar tus datos de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/11.png"
+    },
+    {
+        id: 11,
+        title: "Revisar los Pasos de Eliminación",
+        description: "Haz clic en '3 pasos' para revisar el proceso de eliminación de tus datos de actividad de Google.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/12.png"
+    },
+    {
+        id: 12,
+        title: "Proceder al Siguiente Paso",
+        description: "Haz clic en 'Siguiente' para continuar con el proceso de eliminación de datos.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/13.png"
+    },
+    {
+        id: 13,
+        title: "Confirmar Acceso a Eliminación",
+        description: "Haz clic en el área designada para confirmar tu intención de eliminar datos.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/14.png"
+    },
+    {
+        id: 14,
+        title: "Iniciar Eliminación de Datos",
+        description: "Haz clic en 'Eliminar' para quitar tus datos de actividad de Google seleccionados.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/15.png"
+    },
+    {
+        id: 15,
+        title: "Reconocer Aviso de Eliminación",
+        description: "Haz clic en 'Entendido' para reconocer el mensaje de confirmación sobre la eliminación de datos.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/16.png"
+    },
+    {
+        id: 16,
+        title: "Abrir Configuración de Actividad",
+        description: "Haz clic en el área relevante para acceder a la configuración de tu actividad para una gestión posterior.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/17.png"
+    },
+    {
+        id: 17,
+        title: "Activar Controles de Actividad",
+        description: "Haz clic en 'Activado' para habilitar los controles de actividad que gestionan la recolección de datos.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/18.png"
+    },
+    {
+        id: 18,
+        title: "Desactivar Rastreo de Actividad",
+        description: "Haz clic en 'Desactivar' para impedir que Google guarde tus datos de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/19.png"
+    },
+    {
+        id: 19,
+        title: "Acceder al Cuadro de Diálogo de Confirmación",
+        description: "Haz clic en el área para abrir el cuadro de diálogo de confirmación para desactivar el rastreo de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/20.png"
+    },
+    {
+        id: 20,
+        title: "Confirmar Cambio de Configuración",
+        description: "Haz clic en 'Entendido' para confirmar que el rastreo de actividad ha sido desactivado.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/21.png"
+    },
+    {
+        id: 21,
+        title: "Abrir Opciones Adicionales",
+        description: "Haz clic en el área designada para acceder a más opciones relacionadas con tus datos de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/22.png"
+    },
+    {
+        id: 22,
+        title: "Descartar Notificaciones",
+        description: "Haz clic en 'Descartar' para cerrar cualquier notificación o alerta relacionada con tus datos de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/23.png"
+    },
+    {
+        id: 23,
+        title: "Acceder a Configuración de Rango de Tiempo",
+        description: "Haz clic en el área para abrir la configuración para seleccionar el rango de tiempo de los datos a eliminar.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/24.png"
+    },
+    {
+        id: 24,
+        title: "Seleccionar Rango de Tiempo 'Todo el Tiempo'",
+        description: "Haz clic en 'Todo el tiempo' para elegir todo el historial de tus datos de actividad de Google para su eliminación.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/25.png"
+    },
+    {
+        id: 25,
+        title: "Confirmar Eliminación de Datos",
+        description: "Haz clic en 'Eliminar' para eliminar permanentemente tus datos de actividad de Google del rango de tiempo seleccionado.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/26.png"
+    },
+    {
+        id: 26,
+        title: "Reconocer Finalización",
+        description: "Haz clic en 'Entendido' para confirmar que tu proceso de eliminación de datos ha finalizado.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/27.png"
+    },
+    {
+        id: 27,
+        title: "Eliminación de Datos Completada",
+        description: "Has eliminado con éxito tus datos de actividad de Google y has desactivado el rastreo de actividad.",
+        image: "https://ik.imagekit.io/bebell/Sentinel%20-%20Privacy%20&%20Security/28.png"
+    },
+    {
+        id: 28,
+        title: "Mantén Tu Privacidad",
+        description: "Para mantener tu privacidad, considera revisar otras configuraciones de tu cuenta de Google regularmente.",
+        image: "https://cdn.shopify.com/s/files/1/0242/0175/6777/files/AIM-Thumbnails.gif?v=1769885919"
+    }
+];
+
+</script>
+
+
+
+
+
+
+
+
+<!-- Widget VOLVER-ARRIBA -->
+<script>
+// Crear Botón Volver Arriba Dinámicamente
 document.addEventListener("DOMContentLoaded", function () {
-    // Create the button container
+    // Crear el contenedor del botón
     const backToTop = document.createElement("div");
     backToTop.id = "back-to-top";
     backToTop.style.position = "fixed";
@@ -1101,20 +480,20 @@ document.addEventListener("DOMContentLoaded", function () {
     backToTop.style.cursor = "pointer";
     backToTop.style.zIndex = "9999";
 
-    // Create the image inside the button
+    // Crear la imagen dentro del botón
     const backToTopImg = document.createElement("img");
     backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
     backToTopImg.alt = "Volver arriba";
     backToTopImg.style.width = "40px";
     backToTopImg.style.height = "40px";
 
-    // Append image to the button
+    // Añadir la imagen al botón
     backToTop.appendChild(backToTopImg);
 
-    // Append button to the body
+    // Añadir el botón al cuerpo del documento
     document.body.appendChild(backToTop);
 
-    // Scroll Event Listener
+    // Escuchador de Eventos de Desplazamiento
     window.addEventListener("scroll", function () {
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
             backToTop.style.display = "block";
@@ -1123,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Click Event for Scrolling to Top
+    // Evento de Clic para Desplazarse a la Parte Superior
     backToTop.addEventListener("click", function () {
         window.scrollTo({
             top: 0,
@@ -1132,13 +511,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-<!-- End Widget BACK-TO-TOP -->  
-    
-    
-    
-    
-    
-    
-    
-</body>
+<!-- Fin Widget VOLVER-ARRIBA -->
+
+
+  </body>
 </html>
