@@ -8,434 +8,34 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    
     <!-- Favicon -->
     <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/bb6d550f9b7a6643eff984e7eb1c932ff997f664.png">
+
     
-    <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f5f7fa;
-        }
-        
-        /* Page Loader */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .loader-header {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #2563eb;
-            margin-bottom: 20px;
-        }
-        
-        .progress {
-            width: 200px;
-            height: 4px;
-            background: #e5e7eb;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .progress::after {
-            content: '';
-            display: block;
-            width: 60%;
-            height: 100%;
-            background: #2563eb;
-            animation: loading 1.5s infinite;
-        }
-        
-        @keyframes loading {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(300%); }
-        }
-        
-        /* Header */
-        .header {
-            background: #ffffff;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .logo-icon {
-            color: #2563eb;
-            font-size: 1.5rem;
-        }
-        
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1f2937;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .btn-primary {
-            background: #2563eb;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: background 0.3s;
-        }
-        
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-        
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        
-        /* Hero Section */
-        .hero-section {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: #6b7280;
-            max-width: 800px;
-            margin: 0 auto 2rem;
-        }
-        
-        /* Carousel */
-        .carousel-container {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            overflow: hidden;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
-        
-        .carousel-track {
-            display: flex;
-            transition: transform 0.5s ease;
-        }
-        
-        .carousel-slide {
-            min-width: 100%;
-            position: relative;
-        }
-        
-        .carousel-slide img {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-        }
-        
-        .slide-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: white;
-            padding: 2rem;
-        }
-        
-        .slide-info h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .carousel-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s;
-        }
-        
-        .carousel-button:hover {
-            background: white;
-        }
-        
-        .prev-button {
-            left: 20px;
-        }
-        
-        .next-button {
-            right: 20px;
-        }
-        
-        /* Content Card */
-        .content-card {
-            background: white;
-            border-radius: 12px;
-            padding: 3rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 3rem;
-        }
-        
-        .content-card > p {
-            font-size: 1.125rem;
-            color: #4b5563;
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-        
-        /* Step Container */
-        .step-container {
-            margin-bottom: 3rem;
-            padding-bottom: 3rem;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .step-container:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        
-        .step-container h3 {
-            font-size: 1.5rem;
-            color: #1f2937;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .step-number {
-            background: #2563eb;
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-        
-        .step-container p {
-            color: #4b5563;
-            margin-bottom: 1.5rem;
-            line-height: 1.7;
-        }
-        
-        .step-image {
-            width: 100%;
-            max-width: 800px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border: 1px solid #e5e7eb;
-            display: block;
-            margin: 0 auto;
-        }
-        
-        /* Notes */
-        .warning-note, .tip-note {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .tip-note {
-            background: #dbeafe;
-            border-left-color: #3b82f6;
-        }
-        
-        .warning-note h3, .tip-note h3 {
-            color: #92400e;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .tip-note h3 {
-            color: #1e40af;
-        }
-        
-        .warning-note p, .tip-note p {
-            color: #78350f;
-            margin: 0;
-        }
-        
-        .tip-note p {
-            color: #1e3a8a;
-        }
-        
-        /* Alternative Method */
-        .alternative-method {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-        
-        .alternative-method h3 {
-            color: #1e40af;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .alternative-method ol {
-            margin-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .alternative-method li {
-            margin-bottom: 0.5rem;
-            color: #4b5563;
-        }
-        
-        .alternative-method code {
-            background: #f1f5f9;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            color: #0f172a;
-        }
-        
-        .note {
-            color: #64748b;
-            font-style: italic;
-            font-size: 0.95rem;
-        }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            background: #1f2937;
-            color: white;
-            margin-top: 3rem;
-        }
-        
-        .footer a {
-            color: white;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: color 0.3s;
-        }
-        
-        .footer a:hover {
-            color: #93c5fd;
-        }
-        
-        .heart-icon {
-            color: #ef4444;
-        }
-        
-        /* Back to Top Button */
-        #back-to-top {
-            transition: opacity 0.3s;
-        }
-        
-        #back-to-top:hover {
-            opacity: 0.8;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            .header-actions {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .content-card {
-                padding: 1.5rem;
-            }
-            
-            .carousel-slide img {
-                height: 300px;
-            }
-            
-            .step-container h3 {
-                font-size: 1.25rem;
-            }
-        }
-    </style>
 </head>
 <body>
+
+
+
     <!-- Page Loader -->
     <div class="page-loader" id="pageLoader">
         <div class="loader-header">Wait for it...</div>
         <div class="progress"></div>
     </div>
+    
+    
+
+
+
+
+
+
+
     
     <!-- Header -->
     <header class="header">
@@ -443,143 +43,135 @@
             <i class="fas fa-shield-alt logo-icon"></i>
             <div class="logo-text">Sentinel<span></span></div>
         </div>
+
         
         <div class="header-actions">
+
+            
             <a href="/security-dashboard" class="btn-primary">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
+
             
-            <a href="/security-dashboard/pdfs/gmail-third-party-apps-guide.pdf" target="_blank" class="btn-primary">
-                <i class="fas fa-print"></i> Print Guide
-            </a>
+<!-- Download PDF File -->
+        <!-- Direct PDF link (no JavaScript needed) -->
+        <a href="/security-dashboard/pdfs/gmail-third-party-apps-guide.pdf" target="_blank" class="btn-primary">
+            <i class="fas fa-print"></i> Print Guide
+        </a>
+
+
+            
+
         </div>
     </header>
     
+
+
+
+
+    
     <!-- Main Content -->
     <main class="main-content">
+        
+        
         <!-- Hero Section -->
         <section class="hero-section">
             <h1 class="hero-title">How to Manage and Unsubscribe from Third-Party Applications in Gmail</h1>
             <p class="hero-subtitle">A comprehensive step-by-step guide to review and remove third-party app permissions connected to your Gmail account. This procedure is recommended for <strong>Google Personal Accounts</strong>.</p>
-            
-            <!-- Portfolio Carousel -->
+
+
+        <!-- Portfolio Carousel -->
             <div class="carousel-container">
                 <div class="carousel-track" id="carouselTrack">
-                    <!-- Slides will be inserted by JavaScript -->
+                    <!-- All 10 slides will be inserted here by JavaScript -->
                 </div>
                 <button class="carousel-button prev-button" id="prevButton" aria-label="Previous Slide"><i class="fas fa-chevron-left"></i></button>
                 <button class="carousel-button next-button" id="nextButton" aria-label="Next Slide"><i class="fas fa-chevron-right"></i></button>
             </div>
         </section>
-        
+
+
+
         <!-- Guide Content -->
         <div class="content-card">
-            <p>This tutorial explains how to manage and unsubscribe from third-party applications connected to your Gmail account. Regularly reviewing these connections helps protect your security and privacy.</p>
+            <p>This tutorial explains how to manage and unsubscribe from third-party applications connected to your Gmail account. You will learn how to access Gmail to begin managing these app permissions.</p>
             
             <!-- Step 1 -->
             <div class="step-container">
                 <h3><span class="step-number">1</span> Go to <a href="https://www.google.com" target="_blank">www.google.com</a></h3>
-                <p>Open your preferred web browser (Chrome, Firefox, Safari, etc.) and navigate to the Google homepage.</p>
-                <div class="warning-note">
-                    <h3>Important</h3>
-                    <p><strong>Make sure you are logged into your Personal Google Account.</strong> Check the profile icon in the top-right corner.</p>
-                </div>
+                <p>Open your Chrome browser or any preferred browser and go to Google.com.</p>
                 <img class="step-image" src="IMAGE_PLACEHOLDER_1.png" alt="Google homepage" />
             </div>
-            
-            <!-- Step 2 -->
+
             <div class="step-container">
-                <h3><span class="step-number">2</span> Access Your Google Account</h3>
-                <p>Click on your profile picture or initial in the top-right corner of the Google homepage. From the dropdown menu, select <strong>"Manage your Google Account"</strong>.</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_2.png" alt="Click Manage your Google Account" />
-            </div>
-            
-            <!-- Step 3 -->
-            <div class="step-container">
-                <h3><span class="step-number">3</span> Navigate to Security Settings</h3>
-                <p>You will be taken to your account management page. In the left sidebar, click on the <strong>"Security"</strong> tab.</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_3.png" alt="Click Security in left sidebar" />
-            </div>
-            
-            <!-- Step 4 -->
-            <div class="step-container">
-                <h3><span class="step-number">4</span> Find Third-Party App Access</h3>
-                <p>Scroll down the Security page until you see the section titled <strong>"Third-party apps with account access"</strong>. Click on <strong>"Manage third-party access"</strong>.</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_4.png" alt="Find Manage third-party access" />
-            </div>
-            
-            <!-- Step 5 -->
-            <div class="step-container">
-                <h3><span class="step-number">5</span> Review Connected Apps</h3>
-                <p>You will now see a list of all applications and services that have permission to access some part of your Google account. This includes email clients, shopping sites, productivity tools, and more.</p>
-                <div class="tip-note">
-                    <h3>Tip</h3>
-                    <p>Pay attention to the <strong>"Last accessed"</strong> date. Apps you haven't used in years are good candidates for removal.</p>
-                </div>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_5.png" alt="List of third-party apps" />
-            </div>
-            
-            <!-- Step 6 -->
-            <div class="step-container">
-                <h3><span class="step-number">6</span> Inspect an App's Permissions</h3>
-                <p>To see what an app can do, click on its name in the list. A details panel will open showing the specific permissions granted (e.g., "View your email messages and settings").</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_6.png" alt="App permission details" />
-            </div>
-            
-            <!-- Step 7 -->
-            <div class="step-container">
-                <h3><span class="step-number">7</span> Remove App Access</h3>
-                <p>If you want to revoke an app's access, click the blue <strong>"Remove Access"</strong> button at the bottom of the details panel.</p>
+                <h3><span class="step-number">2</span> Sign into Your Google Account</h3>
+                <p>Make sure you are logged into your personal Google Account. Check the top-right corner for your profile picture.</p>
                 <div class="warning-note">
-                    <h3>Heads Up</h3>
-                    <p>Removing access might break the functionality of that app or service. You may need to sign in again if you decide to use it later.</p>
+                    <h3>N.B.</h3>
+                    <p><strong>Make sure you are logged into your "Personal Google Account".</strong></p>
                 </div>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_7.png" alt="Click Remove Access button" />
+                <img class="step-image" src="IMAGE_PLACEHOLDER_2.png" alt="Google homepage logged in" />
             </div>
-            
-            <!-- Step 8 -->
+
             <div class="step-container">
-                <h3><span class="step-number">8</span> Confirm Removal</h3>
-                <p>A confirmation pop-up will appear. Read the warning and click <strong>"OK"</strong> to finalize the removal of the app's access to your account.</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_8.png" alt="Confirmation pop-up" />
+                <h3><span class="step-number">3</span> Open Gmail</h3>
+                <p>From the Google home screen, click on the Gmail icon or go directly to Gmail.com to open the Gmail Application.</p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_3.png" alt="Open Gmail" />
             </div>
-            
-            <!-- Step 9 -->
+
             <div class="step-container">
-                <h3><span class="step-number">9</span> Repeat for Other Apps</h3>
-                <p>Go through the list and remove access for any apps you no longer use, don't recognize, or that have overly broad permissions. There is no "select all" feature; you must remove them one by one.</p>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_9.png" alt="Review entire list" />
+                <h3><span class="step-number">4</span> Navigate to Third-Party Apps</h3>
+                <p>Once inside Gmail, navigate to the top search field. The URL should look like: <code>https://mail.google.com/mail/u/0/#inbox</code></p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_4.png" alt="Gmail inbox URL" />
             </div>
-            
-            <!-- Step 10 -->
+
             <div class="step-container">
-                <h3><span class="step-number">10</span> Completion & Best Practices</h3>
-                <p>You have successfully cleaned up your third-party app connections. For ongoing security, consider these best practices:</p>
-                <ul>
-                    <li><strong>Audit Quarterly:</strong> Review this list every 3-6 months.</li>
-                    <li><strong>Be Selective:</strong> Only grant access to apps from trusted developers.</li>
-                    <li><strong>Use Strong Authentication:</strong> Ensure 2-Step Verification is enabled on your Google Account.</li>
-                    <li><strong>Revoke After Use:</strong> If you use a site for a one-time purpose, remove its access immediately after.</li>
-                </ul>
-                <img class="step-image" src="IMAGE_PLACEHOLDER_10.png" alt="Security checklist graphic" />
+                <h3><span class="step-number">5</span> Modify the URL</h3>
+                <p>Select "u/0/#inbox" in the URL and replace it with "#sub". The new URL should look like: <code>https://mail.google.com/mail/#sub</code></p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_5.png" alt="Modify Gmail URL" />
             </div>
-            
-            <!-- Alternative Method -->
-            <div class="alternative-method">
-                <h3><i class="fas fa-route"></i> Alternative Quick Method</h3>
-                <p>You can also access the third-party apps page directly from <strong>inside Gmail</strong>:</p>
+
+            <div class="step-container">
+                <h3><span class="step-number">6</span> Access Subscriptions Page</h3>
+                <p>Press Enter. You will be taken to the subscriptions page where you can see, manage and unsubscribe from all the third-party apps you subscribed to manually.</p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_6.png" alt="Subscriptions page" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">7</span> Review Connected Apps</h3>
+                <p>On this page, you'll see a list of all third-party applications with access to your Gmail account. Review each application carefully.</p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_7.png" alt="List of connected apps" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">8</span> Remove App Access</h3>
+                <p>To unsubscribe from an application, click on it and select "Remove Access" or "Unsubscribe". Confirm the action when prompted.</p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_8.png" alt="Remove app access" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">9</span> Alternative Method via Google Account</h3>
+                <p>For a more comprehensive view, you can also manage apps through Google Account settings:</p>
                 <ol>
-                    <li>While logged into Gmail, look at the URL in your browser's address bar.</li>
-                    <li>It will look like: <code>https://mail.google.com/mail/u/0/#inbox</code></li>
-                    <li>Select the part that says <code>u/0/#inbox</code> and replace it with <code>#sub</code>.</li>
-                    <li>The new URL should be: <code>https://mail.google.com/mail/#sub</code></li>
-                    <li>Press Enter. This will take you directly to your subscriptions and connected apps page.</li>
+                    <li>Click your profile picture → "Manage your Google Account"</li>
+                    <li>Go to "Security" → "Third-party apps with account access"</li>
+                    <li>Click "Manage third-party access"</li>
                 </ol>
-                <p class="note"><em>Note: This method may not show all apps and might display primarily email subscriptions. The Security method (Steps 1-10) is more comprehensive.</em></p>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_9.png" alt="Google Account security settings" />
+            </div>
+
+            <div class="step-container">
+                <h3><span class="step-number">10</span> Completion</h3>
+                <p>You have successfully managed and unsubscribed from third-party applications in Gmail. Regularly review these permissions to maintain your account security and privacy.</p>
+                <div class="tip-note">
+                    <h3>Bulk Unsubscription Tools</h3>
+                    <p>If you want to unsubscribe from applications in bulk, we recommend using specialized tools. You can find a quick tutorial on that <a href="#">here</a>.</p>
+                </div>
+                <img class="step-image" src="IMAGE_PLACEHOLDER_10.png" alt="Completion" />
             </div>
         </div>
     </main>
-    
+
     <!-- Footer -->
     <footer class="footer">
         <p>
@@ -588,204 +180,139 @@
             </a>
         </p>
     </footer>
-    
-    <script>
-        // Carousel Data - For Third-Party Apps Guide
-        const carouselSlides = [
-            {
-                id: 0,
-                title: "Cover",
-                description: "Learn how to manage and unsubscribe from third-party applications connected to your Gmail account.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_0.png"
-            },
-            {
-                id: 1,
-                title: "Sign into Google",
-                description: "Open your browser, go to Google.com, and ensure you're signed into your personal account.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_1.png"
-            },
-            {
-                id: 2,
-                title: "Access Account Management",
-                description: "Click your profile picture and select 'Manage your Google Account'.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_2.png"
-            },
-            {
-                id: 3,
-                title: "Go to Security",
-                description: "Click on the 'Security' tab in the left sidebar.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_3.png"
-            },
-            {
-                id: 4,
-                title: "Find Third-Party Apps",
-                description: "Scroll to 'Third-party apps with account access' and click 'Manage third-party access'.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_4.png"
-            },
-            {
-                id: 5,
-                title: "Review App List",
-                description: "See all apps with access to your account. Check their 'Last accessed' dates.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_5.png"
-            },
-            {
-                id: 6,
-                title: "Inspect App Permissions",
-                description: "Click an app's name to see the specific data it can access.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_6.png"
-            },
-            {
-                id: 7,
-                title: "Remove Access",
-                description: "Click 'Remove Access' to revoke the app's permissions.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_7.png"
-            },
-            {
-                id: 8,
-                title: "Confirm Removal",
-                description: "Click 'OK' in the confirmation pop-up to finalize.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_8.png"
-            },
-            {
-                id: 9,
-                title: "Maintain Security",
-                description: "Regularly audit connected apps and enable 2-Step Verification.",
-                image: "IMAGE_PLACEHOLDER_CAROUSEL_9.png"
-            }
-        ];
-        
-        // DOM Elements
-        const pageLoader = document.getElementById('pageLoader');
-        const carouselTrack = document.getElementById('carouselTrack');
-        const prevButton = document.getElementById('prevButton');
-        const nextButton = document.getElementById('nextButton');
-        
-        // Page Loader
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                pageLoader.style.display = 'none';
-            }, 1000);
-        });
-        
-        // Carousel Functionality
-        let currentSlide = 0;
-        
-        function initializeCarousel() {
-            // Clear any existing slides
-            carouselTrack.innerHTML = '';
-            
-            // Create and append slides
-            carouselSlides.forEach((slide, index) => {
-                const slideElement = document.createElement('div');
-                slideElement.className = 'carousel-slide';
-                slideElement.setAttribute('data-slide-index', index);
-                slideElement.innerHTML = `
-                    <img src="${slide.image}" alt="${slide.title}" onerror="this.src='https://via.placeholder.com/800x400/3b82f6/ffffff?text=${encodeURIComponent(slide.title)}'">
-                    <div class="slide-info">
-                        <h3>${slide.title}</h3>
-                        <p>${slide.description}</p>
-                    </div>
-                `;
-                carouselTrack.appendChild(slideElement);
-            });
-            
-            updateCarousel();
-        }
-        
-        function updateCarousel() {
-            const slideWidth = carouselTrack.clientWidth / carouselSlides.length;
-            carouselTrack.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
-        }
-        
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % carouselSlides.length;
-            updateCarousel();
-        }
-        
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + carouselSlides.length) % carouselSlides.length;
-            updateCarousel();
-        }
-        
-        // Event Listeners
-        prevButton.addEventListener('click', prevSlide);
-        nextButton.addEventListener('click', nextSlide);
-        
-        // Auto-advance carousel every 5 seconds
-        let carouselInterval = setInterval(nextSlide, 5000);
-        
-        // Pause auto-advance on hover
-        carouselTrack.addEventListener('mouseenter', () => {
-            clearInterval(carouselInterval);
-        });
-        
-        carouselTrack.addEventListener('mouseleave', () => {
-            carouselInterval = setInterval(nextSlide, 5000);
-        });
-        
-        // Initialize on DOM Content Loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeCarousel();
-            
-            // Handle window resize
-            window.addEventListener('resize', updateCarousel);
-        });
-        
-        // Back to Top Button
-        document.addEventListener("DOMContentLoaded", function () {
-            // Create the button container
-            const backToTop = document.createElement("div");
-            backToTop.id = "back-to-top";
-            backToTop.style.position = "fixed";
-            backToTop.style.bottom = "20px";
-            backToTop.style.right = "20px";
+
+
+    <script src="script.js"></script>
+
+
+<script>
+  // Carousel Data - All 10 steps
+const carouselSlides = [
+    {
+        id: 0,
+        title: "Cover",
+        description: "This tutorial explains how to manage and unsubscribe from third-party applications connected to your Gmail account.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_0.png"
+    },
+    {
+        id: 1,
+        title: "Go to Google.com",
+        description: "Open your browser and go to Google.com. Make sure you're logged into your personal Google Account.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_1.png"
+    },
+    {
+        id: 2,
+        title: "Open Gmail",
+        description: "From the Google home screen, click on the Gmail icon to open the Gmail Application.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_2.png"
+    },
+    {
+        id: 3,
+        title: "Check Gmail URL",
+        description: "Navigate to the top search field. The URL should look like: https://mail.google.com/mail/u/0/#inbox",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_3.png"
+    },
+    {
+        id: 4,
+        title: "Modify URL",
+        description: "Select 'u/0/#inbox' and replace it with '#sub' to get: https://mail.google.com/mail/#sub",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_4.png"
+    },
+    {
+        id: 5,
+        title: "Access Subscriptions",
+        description: "Press Enter to go to the subscriptions page with all your third-party apps.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_5.png"
+    },
+    {
+        id: 6,
+        title: "Review Apps",
+        description: "See all third-party applications with access to your Gmail account.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_6.png"
+    },
+    {
+        id: 7,
+        title: "Remove Access",
+        description: "Click on an app and select 'Remove Access' or 'Unsubscribe' to revoke permissions.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_7.png"
+    },
+    {
+        id: 8,
+        title: "Alternative Method",
+        description: "You can also manage apps through Google Account Security settings for a comprehensive view.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_8.png"
+    },
+    {
+        id: 9,
+        title: "Manage Completed",
+        description: "You have successfully managed third-party app permissions. Review regularly for security.",
+        image: "IMAGE_PLACEHOLDER_CAROUSEL_9.png"
+    }
+];
+
+// Carousel initialization code will be in script.js
+</script>
+
+
+
+
+
+
+
+
+<!-- Widget BACK-TO-TOP -->
+<script>
+// Create Back-to-Top Button Dynamically
+document.addEventListener("DOMContentLoaded", function () {
+    // Create the button container
+    const backToTop = document.createElement("div");
+    backToTop.id = "back-to-top";
+    backToTop.style.position = "fixed";
+    backToTop.style.bottom = "20px";
+    backToTop.style.right = "20px";
+    backToTop.style.display = "none";
+    backToTop.style.cursor = "pointer";
+    backToTop.style.zIndex = "9999";
+
+    // Create the image inside the button
+    const backToTopImg = document.createElement("img");
+    backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
+    backToTopImg.alt = "Volver arriba";
+    backToTopImg.style.width = "40px";
+    backToTopImg.style.height = "40px";
+
+    // Append image to the button
+    backToTop.appendChild(backToTopImg);
+
+    // Append button to the body
+    document.body.appendChild(backToTop);
+
+    // Scroll Event Listener
+    window.addEventListener("scroll", function () {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            backToTop.style.display = "block";
+        } else {
             backToTop.style.display = "none";
-            backToTop.style.cursor = "pointer";
-            backToTop.style.zIndex = "9999";
-            
-            // Create the image inside the button
-            const backToTopImg = document.createElement("img");
-            backToTopImg.src = "https://bucket.mlcdn.com/a/3336/3336910/images/972c5065cffe83955d5322557dcdce28eca170e5.png";
-            backToTopImg.alt = "Back to top";
-            backToTopImg.style.width = "40px";
-            backToTopImg.style.height = "40px";
-            backToTopImg.style.borderRadius = "50%";
-            backToTopImg.style.boxShadow = "0 2px 10px rgba(0,0,0,0.2)";
-            
-            // Append image to the button
-            backToTop.appendChild(backToTopImg);
-            
-            // Append button to the body
-            document.body.appendChild(backToTop);
-            
-            // Scroll Event Listener
-            window.addEventListener("scroll", function () {
-                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-                    backToTop.style.display = "block";
-                } else {
-                    backToTop.style.display = "none";
-                }
-            });
-            
-            // Click Event for Scrolling to Top
-            backToTop.addEventListener("click", function () {
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
-            });
+        }
+    });
+
+    // Click Event for Scrolling to Top
+    backToTop.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
-        
-        // Image placeholder fallback
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('.step-image');
-            images.forEach(img => {
-                img.addEventListener('error', function() {
-                    const altText = this.alt || 'Step image';
-                    this.src = `https://via.placeholder.com/800x500/1e40af/ffffff?text=${encodeURIComponent(altText)}`;
-                });
-            });
-        });
-    </script>
-</body>
+    });
+});
+</script>
+<!-- End Widget BACK-TO-TOP -->
+
+
+
+
+
+    
+
+
+  </body>
 </html>
