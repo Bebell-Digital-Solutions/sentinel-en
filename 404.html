@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>404 - Sector Not Found | Sentinel</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700;800;900&family=Fira+Code:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+    :root {
+        /* --- Theme Variables --- */
+        --skin-color: #ff5011;
+        --mirage-color: hsl(210, 10%, 23%);
+        --title-color: hsl(242, 8%, 98%);
+        --text-color: hsl(242, 8%, 80%);
+        --body-color: #0d0d0d;
+        --box-color: hsl(242, 14%, 12%);
+        
+        --primary: var(--skin-color);
+        --secondary: var(--mirage-color);
+        
+        --bg-dark: var(--body-color);
+        --bg-darker: #050505;
+        --bg-card: var(--box-color);
+        --bg-hover: hsl(242, 14%, 16%);
+        
+        --text-primary: var(--title-color);
+        --text-secondary: var(--text-color);
+        
+        --success: #51cf66;
+        --warning: #ffd43b;
+        --danger: #ef4444;
+        
+        --gradient-1: linear-gradient(135deg, var(--primary) 0%, #ff7a33 100%);
+        
+        --shadow-glow: 0 0 30px rgba(255, 80, 17, 0.25);
+        --shadow-glow-strong: 0 0 50px rgba(255, 80, 17, 0.4);
+        
+        --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        --font-primary: 'Inter', sans-serif;
+        --font-code: 'Fira Code', monospace;
+        --font-tech: 'Orbitron', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: var(--font-primary);
+        font-weight: 500;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        line-height: 1.7;
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Background Animations (Reused from Original) */
+    .hero-bg {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+    }
+    #matrixCanvas {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15;
+    }
+    .grid-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: 
+            linear-gradient(var(--primary) 1px, transparent 1px),
+            linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+        background-size: 50px 50px; opacity: 0.05;
+        animation: gridMove 20s linear infinite;
+    }
+    .scan-line {
+        position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+        background: var(--gradient-1); box-shadow: 0 0 20px var(--primary);
+        animation: scanDown 3s linear infinite;
+    }
+    .hack-particles {
+        position: absolute; width: 100%; height: 100%; overflow: hidden;
+    }
+    .particle {
+        position: absolute; width: 4px; height: 4px; background: var(--primary);
+        border-radius: 50%; opacity: 0.6; font-family: var(--font-code); font-size: 1rem;
+        color: var(--primary); display: flex; align-items: center; justify-content: center;
+        animation: floatParticle 8s infinite ease-in-out;
+    }
+
+    @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+    @keyframes scanDown { 0% { top: -2px; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    @keyframes floatParticle {
+        0%, 100% { transform: translateY(100vh) translateX(0); opacity: 0; }
+        10%, 90% { opacity: 0.6; }
+        50% { transform: translateY(-100px) translateX(100px); opacity: 1; }
+    }
+
+    /* 404 Specific Layout */
+    .error-container {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 800px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .error-glitch-wrapper {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .error-code {
+        font-family: var(--font-tech);
+        font-size: clamp(6rem, 15vw, 10rem);
+        font-weight: 900;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        letter-spacing: 5px;
+        filter: drop-shadow(0 0 20px rgba(255, 80, 17, 0.4));
+        position: relative;
+    }
+
+    .error-code::before, .error-code::after {
+        content: "404";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg-dark);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .error-code::before {
+        left: 2px;
+        text-shadow: -2px 0 var(--danger);
+        animation: glitch-anim-1 2s infinite linear alternate-reverse;
+    }
+
+    .error-code::after {
+        left: -2px;
+        text-shadow: 2px 0 var(--primary);
+        animation: glitch-anim-2 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim-1 {
+        0% { clip-path: inset(20% 0 80% 0); }
+        20% { clip-path: inset(60% 0 10% 0); }
+        40% { clip-path: inset(40% 0 50% 0); }
+        60% { clip-path: inset(80% 0 5% 0); }
+        80% { clip-path: inset(10% 0 70% 0); }
+        100% { clip-path: inset(30% 0 40% 0); }
+    }
+
+    @keyframes glitch-anim-2 {
+        0% { clip-path: inset(10% 0 60% 0); }
+        20% { clip-path: inset(80% 0 5% 0); }
+        40% { clip-path: inset(30% 0 20% 0); }
+        60% { clip-path: inset(70% 0 15% 0); }
+        80% { clip-path: inset(40% 0 40% 0); }
+        100% { clip-path: inset(20% 0 50% 0); }
+    }
+
+    .error-title {
+        font-family: var(--font-tech);
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Terminal Box */
+    .hack-terminal {
+        background: linear-gradient(135deg, rgba(255, 80, 17, 0.05) 0%, rgba(255, 122, 51, 0.05) 100%);
+        border: 2px solid var(--primary);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(255, 80, 17, 0.3), 0 0 60px rgba(255, 122, 51, 0.2), inset 0 0 30px rgba(255, 80, 17, 0.1);
+        backdrop-filter: blur(20px);
+        width: 100%;
+        max-width: 650px;
+        margin-bottom: 3rem;
+        text-align: left;
+        cursor: text;
+    }
+
+    .terminal-header {
+        background: linear-gradient(135deg, rgba(255, 80, 17, 0.1) 0%, rgba(255, 122, 51, 0.1) 100%);
+        padding: 1.2rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 2px solid var(--primary);
+    }
+
+    .terminal-dots { display: flex; gap: 0.5rem; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.red { background: var(--danger); }
+    .dot.yellow { background: var(--warning); }
+    .dot.green { background: var(--success); }
+
+    .terminal-title {
+        color: var(--text-primary);
+        font-family: var(--font-code);
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .terminal-body {
+        padding: 2rem 1.5rem;
+        font-family: var(--font-code);
+        font-size: 0.95rem;
+        line-height: 1.9;
+        background: rgba(0,0,0,0.2);
+        max-height: 300px;
+        overflow-y: auto;
+        scroll-behavior: smooth;
+    }
+
+    .terminal-body::-webkit-scrollbar { width: 6px; }
+    .terminal-body::-webkit-scrollbar-track { background: transparent; }
+    .terminal-body::-webkit-scrollbar-thumb { background: var(--mirage-color); border-radius: 3px; }
+
+    .terminal-line { margin-bottom: 0.5rem; word-break: break-all; }
+    .prompt { color: var(--primary); margin-right: 0.5rem; white-space: nowrap; }
+    .command { color: var(--text-primary); }
+    .output { color: var(--text-secondary); display: block; margin-left: 1.5rem; }
+    .output.error { color: var(--danger); text-shadow: 0 0 10px rgba(239, 68, 68, 0.5); }
+    .output.success { color: var(--success); text-shadow: 0 0 10px rgba(81, 207, 102, 0.3); }
+    
+    /* Interactive Input */
+    #termInput {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        font-family: var(--font-code);
+        font-size: 0.95rem;
+        outline: none;
+        flex: 1;
+        caret-color: var(--primary);
+        width: 100%;
+    }
+    
+    #termInput::placeholder {
+        color: var(--primary);
+        animation: blink 1s infinite;
+        opacity: 1;
+    }
+
+    @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+
+    /* Buttons */
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 1.1rem 2.2rem;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all var(--transition);
+        border: 2px solid transparent;
+        cursor: pointer;
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-shine {
+        position: absolute;
+        top: 0; left: -100%; width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s;
+    }
+    .btn:hover .btn-shine { left: 100%; }
+
+    .btn-primary {
+        background: var(--gradient-1); color: var(--bg-dark);
+    }
+    .btn-primary:hover {
+        transform: translateY(-3px); box-shadow: var(--shadow-glow-strong);
+    }
+
+    .btn-secondary {
+        background: transparent; color: var(--primary); border-color: var(--primary);
+    }
+    .btn-secondary:hover {
+        background: var(--primary); color: var(--bg-dark);
+        transform: translateY(-3px); box-shadow: var(--shadow-glow);
+    }
+
+    @media (max-width: 768px) {
+        .hero-buttons { flex-direction: column; width: 100%; }
+        .btn { justify-content: center; width: 100%; }
+        .terminal-body { padding: 1.5rem 1rem; font-size: 0.85rem; max-height: 250px; }
+    }
+    </style>
+</head>
+<body>
+    <!-- Persistent Background Effects -->
+    <div class="hero-bg">
+        <canvas id="matrixCanvas"></canvas>
+        <div class="grid-overlay"></div>
+        <div class="scan-line"></div>
+        <div class="hack-particles" id="hackParticles"></div>
+    </div>
+
+    <!-- Error Content -->
+    <div class="error-container">
+        <div class="error-glitch-wrapper">
+            <h1 class="error-code">404</h1>
+        </div>
+        <h2 class="error-title">Sector Not Found</h2>
+
+        <div class="hack-terminal" id="hackTerminal">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <span class="dot red"></span>
+                    <span class="dot yellow"></span>
+                    <span class="dot green"></span>
+                </div>
+                <div class="terminal-title">SYSTEM_DIAGNOSTICS</div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div class="terminal-line">
+                    <span class="prompt">root@sentinel:~$</span>
+                    <span class="command">traceroute /requested-location</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">Locating secure path...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output error">[FATAL_ERROR] Destination missing or scrubbed.</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="output">The requested protocol may have been moved, deleted, or you lack clearance.</span>
+                </div>
+                <div class="terminal-line" style="margin-top: 1rem;">
+                    <span class="prompt">root@sentinel:~$</span>
+                    <span class="output">Type <span style="color:var(--success)">'home'</span> to return to base, or <span style="color:var(--warning)">'contact'</span> for support.</span>
+                </div>
+                
+                <!-- Interactive Input Line -->
+                <div class="terminal-line" id="active-input-line" style="display: flex; align-items: center;">
+                    <span class="prompt">root@sentinel:~$</span>
+                    <input type="text" id="termInput" autocomplete="off" spellcheck="false" placeholder="_">
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-buttons">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                <span>Return to Dashboard</span>
+                <div class="btn-shine"></div>
+            </a>
+            <a href="/#contact" class="btn btn-secondary">
+                <i class="fas fa-headset"></i>
+                <span>Contact Support</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Matrix Background Script
+        function initMatrix() {
+            const canvas = document.getElementById('matrixCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let x = 0; x < columns; x++) {
+                drops[x] = 1;
+            }
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#ff5011';
+                ctx.font = fontSize + 'px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    const x = i * fontSize;
+                    const y = drops[i] * fontSize;
+                    
+                    ctx.fillText(text, x, y);
+                    
+                    if (y > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 35);
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+
+        // Floating Particles Script
+        function initParticles() {
+            const container = document.getElementById('hackParticles');
+            if (!container) return;
+            
+            const particleCount = 20;
+            const chars = ['0', '1', '{', '}', '[', ']', '<', '>', '/', '*'];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = chars[Math.floor(Math.random() * chars.length)];
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Interactive Terminal Logic
+        function initTerminal() {
+            const termInput = document.getElementById('termInput');
+            const terminalBody = document.getElementById('terminalBody');
+            const hackTerminal = document.getElementById('hackTerminal');
+            const activeInputLine = document.getElementById('active-input-line');
+
+            // Focus input when clicking anywhere on the terminal box
+            hackTerminal.addEventListener('click', () => {
+                termInput.focus();
+            });
+
+            termInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    const command = this.value.trim().toLowerCase();
+                    
+                    // Don't process empty enter presses
+                    if (command === '') return;
+
+                    // 1. Create a line to show what the user typed
+                    const cmdLine = document.createElement('div');
+                    cmdLine.className = 'terminal-line';
+                    cmdLine.innerHTML = `<span class="prompt">root@sentinel:~$</span> <span class="command">${this.value}</span>`;
+                    terminalBody.insertBefore(cmdLine, activeInputLine);
+                    
+                    this.value = ''; // clear the input
+
+                    // 2. Process the command and generate a response
+                    const responseLine = document.createElement('div');
+                    responseLine.className = 'terminal-line';
+
+                    if (command === 'home' || command === 'cd /') {
+                        responseLine.innerHTML = `<span class="output success">[OK] Initiating redirect to home protocol...</span>`;
+                        setTimeout(() => window.location.href = '/', 800);
+                    } else if (command === 'contact' || command === 'support') {
+                        responseLine.innerHTML = `<span class="output success">[OK] Opening secure comms channel...</span>`;
+                        setTimeout(() => window.location.href = '/#contact', 800);
+                    } else if (command === 'clear') {
+                        // Clear all terminal lines except the active input
+                        const allLines = terminalBody.querySelectorAll('.terminal-line');
+                        allLines.forEach(line => {
+                            if (line !== activeInputLine) {
+                                line.remove();
+                            }
+                        });
+                        return; // Exit early since we cleared the DOM
+                    } else if (command === 'sudo' || command.startsWith('sudo ')) {
+                        responseLine.innerHTML = `<span class="output error">[ERROR] User 'root' is not in the sudoers file. This incident will be reported.</span>`;
+                    } else {
+                        responseLine.innerHTML = `<span class="output error">bash: ${command}: command not found. Try 'home', 'contact', or 'clear'.</span>`;
+                    }
+
+                    // Insert the response above the input line
+                    terminalBody.insertBefore(responseLine, activeInputLine);
+                    
+                    // Auto-scroll to the bottom so the input is always visible
+                    terminalBody.scrollTop = terminalBody.scrollHeight;
+                }
+            });
+        }
+
+        // Initialize All Scripts
+        document.addEventListener('DOMContentLoaded', () => {
+            initMatrix();
+            initParticles();
+            initTerminal();
+        });
+    </script>
+</body>
+</html>
