@@ -349,6 +349,124 @@
             animation: shake 0.3s ease-in-out;
         }
 
+
+
+
+    /* ================= LOADER STYLES ================= */
+    #sentinel-loader-layer {
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100vw; 
+        height: 100vh;
+        background: radial-gradient(ellipse at center, rgba(255, 80, 17, 0.05) 0%, #050505 70%);
+        background-color: #050505; /* Fallback */
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        z-index: 2147483647; /* Max Z-Index to cover EVERYTHING */
+        font-family: 'Courier New', Courier, monospace;
+        transition: opacity 0.6s ease, visibility 0.6s;
+    }
+
+    #sentinel-loader-layer.loader-hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .loader-content-wrapper {
+        display: flex; 
+        flex-direction: column; 
+        align-items: center; 
+        width: 90%; 
+        max-width: 600px;
+    }
+
+    /* Terminal Window */
+    .loader-terminal {
+        background: rgba(0,0,0,0.85); 
+        border: 1px solid #ff5011; 
+        border-radius: 8px;
+        box-shadow: 0 0 30px rgba(255, 80, 17, 0.25); 
+        backdrop-filter: blur(10px); 
+        width: 100%; 
+        overflow: hidden; 
+        margin-bottom: 2rem;
+    }
+
+    .loader-terminal-header {
+        background: rgba(255, 80, 17, 0.1); 
+        padding: 0.8rem; 
+        display: flex; 
+        align-items: center; 
+        gap: 1rem;
+        border-bottom: 1px solid #ff5011;
+    }
+
+    .terminal-dots span { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+    .dot-red { background: #ef4444; } 
+    .dot-yellow { background: #ffd43b; } 
+    .dot-green { background: #51cf66; }
+    
+    .terminal-title { 
+        color: #fff; 
+        font-size: 0.8rem; 
+        font-weight: 600; 
+        letter-spacing: 1px; 
+        text-transform: uppercase;
+    }
+
+    .loader-terminal-body { 
+        padding: 1.5rem; 
+        color: #ccc;
+        font-size: 0.9rem; 
+        min-height: 200px; 
+        line-height: 1.6;
+    }
+
+    .terminal-line { 
+        opacity: 0; 
+        margin-bottom: 0.5rem; 
+        animation: fadeInTerminal 0.5s ease forwards; 
+    }
+    
+    /* Animation Delays for lines */
+    .terminal-line:nth-child(1) { animation-delay: 0.2s; } 
+    .terminal-line:nth-child(2) { animation-delay: 0.8s; }
+    .terminal-line:nth-child(3) { animation-delay: 1.4s; } 
+    .terminal-line:nth-child(4) { animation-delay: 2.0s; }
+    .terminal-line:nth-child(5) { animation-delay: 2.6s; } 
+    .terminal-line:nth-child(6) { animation-delay: 3.2s; }
+
+    @keyframes fadeInTerminal { to { opacity: 1; } }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Progress Bar */
+    .loader-progress-container { 
+        width: 100%; 
+        height: 4px; 
+        background: rgba(255, 80, 17, 0.2); 
+        border-radius: 10px; 
+        overflow: hidden;
+    }
+    .loader-progress-bar { 
+        height: 100%; 
+        background: #ff5011; 
+        width: 0%; 
+        box-shadow: 0 0 15px #ff5011; 
+        transition: width 0.2s linear; 
+    }
+    .loader-percentage { 
+        text-align: center; 
+        color: #ff5011; 
+        margin-top: 10px; 
+        font-weight: bold; 
+        font-size: 0.9rem; 
+    }
+
+        
+
     </style>
 </head>
 <body>
@@ -639,5 +757,89 @@
             }
         });
     </script>
+
+
+
+
+
+<script>
+(function() {
+    // 1. INJECT HTML STRUCTURE
+    var loaderHTML = `
+        <div class="loader-content-wrapper">
+            <div class="loader-terminal">
+                <div class="loader-terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                    </div>
+                    <div class="terminal-title">SENTINEL INITIALIZATION</div>
+                </div>
+                <div class="loader-terminal-body">
+                    <div class="terminal-line"><span style="color:#ff5011">root@sentinel:~$</span> ./load_security_protocol.sh</div>
+                    <div class="terminal-line">[INFO] Analyzing environment...</div>
+                    <div class="terminal-line">[INFO] Loading modules: <span style="color:#51cf66">SUCCESS</span></div>
+                    <div class="terminal-line">[INFO] Establishing secure connection...</div>
+                    <div class="terminal-line" style="color:#51cf66">[SUCCESS] Environment Ready.</div>
+                    <div class="terminal-line"><span style="color:#ff5011">root@sentinel:~$</span> <span style="animation: blink 1s infinite">_</span></div>
+                </div>
+            </div>
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar" id="sentinelProgressBar"></div>
+            </div>
+            <div class="loader-percentage" id="sentinelPercent">0%</div>
+        </div>
+    `;
+
+    var loaderContainer = document.createElement('div');
+    loaderContainer.id = 'sentinel-loader-layer';
+    loaderContainer.innerHTML = loaderHTML;
+    
+    // Prepend to body so it sits on top immediately
+    document.body.prepend(loaderContainer);
+
+    // 2. RUN ANIMATION LOGIC
+    var progress = document.getElementById('sentinelProgressBar');
+    var percentText = document.getElementById('sentinelPercent');
+    var loadValue = 0;
+    
+    // Ensure the page doesn't scroll while loading
+    document.body.style.overflow = 'hidden';
+
+    var loadInterval = setInterval(function() {
+        // Randomly increment progress for "hacker" feel
+        loadValue += Math.random() * 5; 
+        
+        if (loadValue >= 100) {
+            loadValue = 100;
+            clearInterval(loadInterval);
+            
+            // Wait a moment at 100% before fading out
+            setTimeout(function() {
+                var loader = document.getElementById('sentinel-loader-layer');
+                loader.classList.add('loader-hidden');
+                
+                // Restore scrolling
+                document.body.style.overflow = '';
+                
+                // Remove from DOM after fade completes (optional, keeps DOM clean)
+                setTimeout(function(){
+                    loader.remove();
+                }, 700);
+            }, 800);
+        }
+        
+        progress.style.width = Math.floor(loadValue) + '%';
+        percentText.innerText = Math.floor(loadValue) + '%';
+        
+    }, 100); // Speed of updates (lower is faster)
+
+})();
+</script>
+
+
+
+
+
+    
 </body>
 </html>
