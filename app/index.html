@@ -266,21 +266,40 @@
         }
         .modal-close-btn:hover { color: var(--primary); }
 
-        /* Mobile Menu Toggle Button */
-        #mobile-menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            right: 15px; /* Switched to right side */
-            z-index: 60;
-            background: var(--bg-card);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 0.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
+
+
+        /* Mobile Menu Toggle Button - Perfect Square */
+#mobile-menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 60;
+    background: var(--bg-card);
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    width: 48px;        /* Fixed width */
+    height: 48px;       /* Fixed height equal to width = perfect square */
+    padding: 0;         /* Remove padding, let flexbox handle centering */
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    display: flex;      /* Add flex for centering */
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+/* Optional: Add hover effect */
+#mobile-menu-toggle:hover {
+    background: rgba(255, 80, 17, 0.1);
+    transform: scale(1.05);
+}
+
+/* Optional: Adjust icon size if needed */
+#mobile-menu-toggle i {
+    font-size: 1.5rem;
+}
 
         /* Responsive Mobile Drawer Logic */
         @media (max-width: 1024px) {
