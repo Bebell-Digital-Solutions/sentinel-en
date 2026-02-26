@@ -789,45 +789,110 @@
             <div id="dynamic-page-content">
                 <!-- Default Content before Fetch executes -->
                 <div class="card">
-                    <h2>Overview</h2>
-                    <p class="text-lg mb-6">Understand the journey ahead to secure your digital life and private information.</p>
-                    
-                    <div class="w-full aspect-video bg-black rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.8)] border border-[var(--border)] mb-8 overflow-hidden relative">
-                        <div id="video-overlay" class="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-cover bg-center z-10 group" style="background-image: url('https://cdn.shopify.com/s/files/1/0242/0175/6777/files/AIM-Thumbnails_1.gif?v=1768770938');">
-                            <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-all"></div>
-                            
-                            <!-- Orange Circle with White Rounded Play Arrow -->
-                            <div class="relative z-20 hover:scale-110 transition-transform duration-300 w-20 h-20 bg-[var(--primary)] rounded-full flex items-center justify-center shadow-[var(--shadow-glow)]">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white ml-1.5" viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            
-                            <div class="absolute bottom-6 left-6 z-20 text-white font-[var(--font-tech)]">
-                                <h4 class="text-2xl font-bold tracking-wide">Security Protocol Initialization</h4>
-                            </div>
-                        </div>
-                        <video id="overview-video" controls class="w-full h-full object-cover hidden">
-                            <source src="https://cdn.shopify.com/videos/c/o/v/a9fe271f1ea34fb68198e50a30f2a1c9.mp4" type="video/mp4">
-                        </video>
-                    </div>
-
-                    <h3 class="text-xl mb-3 border-l-2 border-[var(--primary)] pl-3">Protocol Definition</h3>
-                    <p class="mb-6 text-[var(--text-main)]">A guided playbook that helps you implement practical security measures through clear instructions and confirmed actions.</p>
-
-                    <h3 class="text-xl mb-4 border-l-2 border-[var(--primary)] pl-3 font-[var(--font-code)]">Initialization Checklist</h3>
-                    <ul class="list-none p-0 space-y-4 mb-8">
-                        <li class="flex items-start gap-3">
-                            <input type="checkbox" class="task-checkbox" id="overview-action1">
-                            <label for="overview-action1" class="text-[var(--text-muted)] mt-1">Read the protocol definitions and risk assessments.</label>
-                        </li>
-                        <li class="flex items-start gap-3">
-                            <input type="checkbox" class="task-checkbox" id="overview-action2">
-                            <label for="overview-action2" class="text-[var(--text-muted)] mt-1">Familiarize yourself with the Sentinel dashboard navigation.</label>
-                        </li>
-                    </ul>
+                    <!-- Overview Section Content Fragment -->
+    <h1 class="text-3xl font-bold mb-4 text-text-main">Overview</h1>
+    <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life and private information.</p>
+    
+    <!-- VIDEO CONTAINER (Responsive 1920x1080px ratio) -->
+    <div class="w-full aspect-video bg-black rounded-2xl shadow-lg mb-8 overflow-hidden relative" id="video-container">
+        <!-- Video Thumbnail -->
+        <div id="video-thumbnail" class="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-cover bg-center z-10">
+            <!-- Add your thumbnail image URL here -->
+            <div class="absolute inset-0 bg-black opacity-40"></div>
+            <img src="https://cdn.shopify.com/s/files/1/0242/0175/6777/files/AIM-Thumbnails_1.gif?v=1768770938" 
+                 alt="Video thumbnail" 
+                 class="absolute inset-0 w-full h-full object-cover">
+            
+            <!-- Play Button with White Background ONLY Behind the Triangle -->
+            <div class="relative z-20 hover:scale-110 transition-all duration-300">
+                <!-- White circle positioned behind just the play triangle -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="bg-white h-10 w-10 rounded-full"></div>
                 </div>
+                
+                <!-- Play Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 relative z-10" viewBox="0 0 20 20" fill="#ff5011">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
             </div>
+            
+            <!-- Optional: Video title overlay -->
+            <div class="absolute bottom-6 left-6 z-20 text-white">
+                <h4 class="text-xl font-bold">Security Overview</h4>
+                <p class="text-white/80">Click to play</p>
+            </div>
+        </div>
+        
+        <!-- Video Element (Hidden by default) -->
+        <video id="overview-video" controls class="w-full h-full object-cover hidden">
+            <!-- Placeholder Video Source (Replace with your actual video file path) -->
+            <source src="https://cdn.shopify.com/videos/c/o/v/a9fe271f1ea34fb68198e50a30f2a1c9.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+
+    
+    <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
+    <p class="mb-4 text-text-muted">This dashboard is your personal guide to improving your online privacy and security. It breaks down complex topics into simple, actionable steps you can take right now.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">Plain definition</h3>
+    <p class="mb-4 text-text-muted">A guided playbook that helps you implement practical security measures through clear instructions and confirmed actions.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">Why it matters</h3>
+    <p class="mb-4 text-text-muted">In today's digital world, protecting your personal information and online accounts is crucial. Proactive steps can prevent identity theft, financial fraud, and privacy breaches.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">Real risk explanation with concrete examples</h3>
+    <p class="mb-4 text-text-muted">Without proper security, you risk losing access to your accounts, having your identity stolen, or your personal data being exposed. For example, a weak password could lead to your email being hacked, which then gives attackers access to your banking, social media, and other critical services. Unchecked tracking can lead to highly personalized and manipulative advertising, or even data being sold to third parties without your explicit consent.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">What to do</h3>
+    <p class="mb-4 text-text-muted">Navigate through each section, read the instructions, and complete the checklists. Your progress will be saved as you confirm each action.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">Ordered action checklist with checkboxes</h3>
+    <ul class="list-none p-0 space-y-3">
+        <li class="flex items-start gap-3">
+            <input type="checkbox" id="overview-action1" class="task-checkbox" disabled>
+            <label for="overview-action1" class="text-text-muted cursor-not-allowed">Read the "What this is" section.</label>
+        </li>
+        <li class="flex items-start gap-3">
+            <input type="checkbox" id="overview-action2" class="task-checkbox" disabled>
+            <label for="overview-action2" class="text-text-muted cursor-not-allowed">Understand the "Why it matters" explanation.</label>
+        </li>
+        <li class="flex items-start gap-3">
+            <input type="checkbox" id="overview-action3" class="task-checkbox" disabled>
+            <label for="overview-action3" class="text-text-muted cursor-not-allowed">Familiarize yourself with the navigation on the left.</label>
+        </li>
+    </ul>
+
+    <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Clear stopping point</h3>
+    <p class="mb-4 text-text-muted">You have successfully reviewed the dashboard's purpose and structure. Proceed to the next section to begin taking action.</p>
+
+    <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="https://www.cisa.gov/cyber-safety" target="_blank" class="tool-card group">
+            <img src="https://www.google.com/s2/favicons?domain=cisa.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+            <div class="flex-1">
+                <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">CISA Security Tips</h4>
+                <p class="text-sm text-text-muted mt-1">General best practices for online security.</p>
+                <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource →</span>
+            </div>
+        </a>
+        <a href="https://ssd.eff.org/" target="_blank" class="tool-card group">
+            <img src="https://www.google.com/s2/favicons?domain=eff.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+            <div class="flex-1">
+                <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Surveillance Self-Defense</h4>
+                <p class="text-sm text-text-muted mt-1">EFF's guide to defending yourself from surveillance.</p>
+                <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource →</span>
+            </div>
+        </a>
+    </div>
+
+    <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
+    <ul class="list-disc list-inside text-red-500 space-y-2">
+        <li><strong>Warning:</strong> Skipping sections will leave gaps in your protection.</li>
+        <li><strong>Warning:</strong> Assuming you are already secure without verifying actions.</li>
+    </ul>
+</div>
             <!-- End Dynamic Container -->
 
             <!-- Main Content Footer -->
