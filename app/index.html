@@ -268,9 +268,9 @@
 
 
 
-        /* Mobile Menu Toggle Button - Perfect Square */
+/* Mobile Menu Toggle Button - Hidden on Desktop by Default */
 #mobile-menu-toggle {
-    display: none;
+    display: none; /* Hidden by default on all screens */
     position: fixed;
     top: 15px;
     right: 15px;
@@ -278,32 +278,30 @@
     background: var(--bg-card);
     border: 1px solid var(--primary);
     color: var(--primary);
-    width: 48px;        /* Fixed width */
-    height: 48px;       /* Fixed height equal to width = perfect square */
-    padding: 0;         /* Remove padding, let flexbox handle centering */
+    width: 48px;
+    height: 48px;
+    padding: 0;
     border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    display: flex;      /* Add flex for centering */
     align-items: center;
     justify-content: center;
     transition: all var(--transition);
 }
 
-/* Optional: Add hover effect */
 #mobile-menu-toggle:hover {
     background: rgba(255, 80, 17, 0.1);
     transform: scale(1.05);
 }
 
-/* Optional: Adjust icon size if needed */
 #mobile-menu-toggle i {
     font-size: 1.5rem;
 }
 
+
         /* Responsive Mobile Drawer Logic */
         @media (max-width: 1024px) {
-            #mobile-menu-toggle { display: block; }
+            #mobile-menu-toggle { display: flex; }
             .sidebar { transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 4rem 1.5rem 1.5rem; max-width: 100%; }
