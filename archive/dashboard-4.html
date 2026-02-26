@@ -334,6 +334,325 @@
 }
 
 
+
+
+
+/* =========================================
+   TOOL CARDS (used in Tools & Links sections)
+   ========================================= */
+.tool-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    transition: all var(--transition);
+    text-decoration: none;
+}
+
+.tool-card:hover {
+    background: var(--bg-hover);
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.tool-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: white;
+    padding: 4px;
+    object-fit: contain;
+}
+
+.tool-card h4 {
+    color: var(--text-main);
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+.tool-card p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.tool-card .text-primary {
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* =========================================
+   VIDEO THUMBNAIL & OVERLAY
+   ========================================= */
+#video-container {
+    position: relative;
+    cursor: pointer;
+}
+
+#video-thumbnail {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    z-index: 10;
+}
+
+#video-thumbnail .absolute.inset-0.bg-black {
+    background: rgba(0, 0, 0, 0.5);
+    transition: opacity 0.3s;
+}
+
+#video-thumbnail:hover .absolute.inset-0.bg-black {
+    opacity: 0.7;
+}
+
+#video-thumbnail .relative.z-20 {
+    transition: transform 0.3s;
+}
+
+#video-thumbnail:hover .relative.z-20 {
+    transform: scale(1.1);
+}
+
+/* =========================================
+   CAROUSEL
+   ========================================= */
+.carousel-section {
+    margin: 2rem 0;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-darker);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+    flex: 0 0 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 80, 17, 0.8);
+    border: 2px solid var(--primary);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: all var(--transition);
+    backdrop-filter: blur(4px);
+}
+
+.carousel-button:hover {
+    background: var(--primary);
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-button.prev-button {
+    left: 10px;
+}
+
+.carousel-button.next-button {
+    right: 10px;
+}
+
+/* =========================================
+   BANNER SECTION (Password Tool)
+   ========================================= */
+.banner-section {
+    background: linear-gradient(135deg, rgba(255, 80, 17, 0.15) 0%, rgba(255, 122, 51, 0.05) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.banner-title {
+    font-family: var(--font-tech);
+    font-size: 2rem;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.banner-subtitle {
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+
+.btn-primary-tool {
+    background: var(--primary);
+    color: var(--bg-dark);
+    border: none;
+    padding: 1rem 2rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all var(--transition);
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+.btn-primary-tool:hover {
+    box-shadow: var(--shadow-glow);
+    transform: scale(1.05);
+    color: white;
+}
+
+/* =========================================
+   MODAL (Password Tool)
+   ========================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    width: 90%;
+    max-width: 900px;
+    height: 80vh;
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    position: relative;
+    box-shadow: var(--shadow-glow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--primary);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    z-index: 10;
+    transition: all var(--transition);
+}
+
+.modal-close-btn:hover {
+    background: var(--primary);
+    color: var(--bg-dark);
+    transform: rotate(90deg);
+}
+
+.modal-iframe-wrapper {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.modal-iframe-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* =========================================
+   CHECKBOXES (already defined, but ensure consistency)
+   ========================================= */
+input[type="checkbox"].task-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,80,17,0.5);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+input[type="checkbox"].task-checkbox:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px rgba(255,80,17,0.5);
+}
+
+input[type="checkbox"].task-checkbox:checked::after {
+    content: '\f00c';
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--bg-dark);
+    font-size: 12px;
+}
+
+input[type="checkbox"].task-checkbox:disabled {
+    border-color: #333;
+    cursor: not-allowed;
+}
+
+input[type="checkbox"].task-checkbox:disabled:checked {
+    background: #333;
+}
+
+
+
+
         
 
         /* Responsive Mobile Drawer Logic */
@@ -598,6 +917,98 @@
             initMobileSidebar();
             bindCheckboxes(); // bind for the default overview load
             updateGlobalProgress(); // Calculate initial progress from memory
+
+
+
+
+// Initialize dynamic components (carousels, video thumbnails, modals)
+function initDynamicComponents() {
+    // Initialize carousels
+    document.querySelectorAll('.carousel-container').forEach(container => {
+        const track = container.querySelector('.carousel-track');
+        const slides = track ? track.children : [];
+        const prevBtn = container.querySelector('.prev-button');
+        const nextBtn = container.querySelector('.next-button');
+        
+        if (!track || slides.length === 0) return;
+        
+        let currentIndex = 0;
+        const slideWidth = 100; // percent
+        
+        function updateCarousel() {
+            track.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        }
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex > 0) ? currentIndex - 1 : slides.length - 1;
+                updateCarousel();
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                currentIndex = (currentIndex < slides.length - 1) ? currentIndex + 1 : 0;
+                updateCarousel();
+            });
+        }
+        
+        // Optional: auto-play? Not implemented.
+    });
+    
+    // Initialize video thumbnails
+    document.querySelectorAll('#video-container').forEach(container => {
+        const thumbnail = container.querySelector('#video-thumbnail');
+        const video = container.querySelector('#overview-video');
+        
+        if (thumbnail && video) {
+            // Remove existing listeners to avoid duplicates
+            thumbnail.replaceWith(thumbnail.cloneNode(true));
+            const newThumbnail = container.querySelector('#video-thumbnail');
+            
+            newThumbnail.addEventListener('click', function() {
+                this.style.display = 'none';
+                video.classList.remove('hidden');
+                video.play().catch(e => console.log('Autoplay prevented:', e));
+            });
+        }
+    });
+    
+    // Initialize modals (if not already bound globally)
+    // The modal open/close should be handled by global listeners, but ensure buttons work
+    const openToolBtn = document.getElementById('openToolBtn');
+    const modal = document.getElementById('toolModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    
+    if (openToolBtn && modal && closeBtn) {
+        // Remove old listeners to avoid duplicates
+        const newOpenBtn = openToolBtn.cloneNode(true);
+        openToolBtn.parentNode.replaceChild(newOpenBtn, openToolBtn);
+        
+        newOpenBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const iframe = document.getElementById('toolIframe');
+            if (iframe && !iframe.src) {
+                iframe.src = iframe.dataset.src; // lazy load
+            }
+            modal.style.display = 'flex';
+        });
+        
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+        
+        // Close on overlay click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+}
+
+
+            
             
             // Map Data-Section Navigation Events
             const navItems = document.querySelectorAll('.nav-item');
