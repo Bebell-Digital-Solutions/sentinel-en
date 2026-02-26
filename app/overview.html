@@ -1,23 +1,48 @@
 <!-- Overview Section Content Fragment -->
 <div class="card">
     <h1 class="text-3xl font-bold mb-4 text-text-main">Overview</h1>
-    <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life.</p>
-
-
+    <p class="text-lg text-text-muted mb-6">Understand the journey ahead to secure your digital life and private information.</p>
     
-
     <!-- VIDEO CONTAINER (Responsive 1920x1080px ratio) -->
-    <div class="w-full aspect-video bg-black rounded-lg shadow-lg mb-8 overflow-hidden relative">
-        <video controls class="w-full h-full object-cover">
+    <div class="w-full aspect-video bg-black rounded-2xl shadow-lg mb-8 overflow-hidden relative" id="video-container">
+        <!-- Video Thumbnail -->
+        <div id="video-thumbnail" class="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-cover bg-center z-10">
+            <!-- Add your thumbnail image URL here -->
+            <div class="absolute inset-0 bg-black opacity-40"></div>
+            <img src="https://cdn.shopify.com/s/files/1/0242/0175/6777/files/AIM-Thumbnails_1.gif?v=1768770938" 
+                 alt="Video thumbnail" 
+                 class="absolute inset-0 w-full h-full object-cover">
+            
+            <!-- Play Button with White Background ONLY Behind the Triangle -->
+            <div class="relative z-20 hover:scale-110 transition-all duration-300">
+                <!-- White circle positioned behind just the play triangle -->
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="bg-white h-10 w-10 rounded-full"></div>
+                </div>
+                
+                <!-- Play Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-20 w-20 relative z-10" viewBox="0 0 20 20" fill="#ff5011">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            
+            <!-- Optional: Video title overlay -->
+            <div class="absolute bottom-6 left-6 z-20 text-white">
+                <h4 class="text-xl font-bold">Security Overview</h4>
+                <p class="text-white/80">Click to play</p>
+            </div>
+        </div>
+        
+        <!-- Video Element (Hidden by default) -->
+        <video id="overview-video" controls class="w-full h-full object-cover hidden">
             <!-- Placeholder Video Source (Replace with your actual video file path) -->
-            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+            <source src="https://cdn.shopify.com/videos/c/o/v/a9fe271f1ea34fb68198e50a30f2a1c9.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
-
-
     
 
+    
     <h3 class="text-xl font-semibold text-text-main mb-3">What this is</h3>
     <p class="mb-4 text-text-muted">This dashboard is your personal guide to improving your online privacy and security. It breaks down complex topics into simple, actionable steps you can take right now.</p>
 
@@ -53,10 +78,24 @@
     <p class="mb-4 text-text-muted">You have successfully reviewed the dashboard's purpose and structure. Proceed to the next section to begin taking action.</p>
 
     <h3 class="text-xl font-semibold text-text-main mb-3">Tools and links</h3>
-    <ul class="list-disc list-inside space-y-2 text-text-muted">
-        <li><a href="#" class="text-primary hover:underline">Link to general security best practices (external)</a></li>
-        <li><a href="#" class="text-primary hover:underline">Link to privacy fundamentals guide (external)</a></li>
-    </ul>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="https://www.cisa.gov/cyber-safety" target="_blank" class="tool-card group">
+            <img src="https://www.google.com/s2/favicons?domain=cisa.gov&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+            <div class="flex-1">
+                <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">CISA Security Tips</h4>
+                <p class="text-sm text-text-muted mt-1">General best practices for online security.</p>
+                <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource →</span>
+            </div>
+        </a>
+        <a href="https://ssd.eff.org/" target="_blank" class="tool-card group">
+            <img src="https://www.google.com/s2/favicons?domain=eff.org&sz=64" class="w-10 h-10 rounded-md bg-white p-1 flex-shrink-0" alt="Icon">
+            <div class="flex-1">
+                <h4 class="text-text-main font-semibold group-hover:text-primary transition-colors">Surveillance Self-Defense</h4>
+                <p class="text-sm text-text-muted mt-1">EFF's guide to defending yourself from surveillance.</p>
+                <span class="text-xs text-primary mt-2 inline-block font-semibold">Visit Resource →</span>
+            </div>
+        </a>
+    </div>
 
     <h3 class="text-xl font-semibold text-text-main mt-6 mb-3">Common mistakes written as warnings</h3>
     <ul class="list-disc list-inside text-red-500 space-y-2">
