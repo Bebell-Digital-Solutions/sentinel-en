@@ -240,6 +240,22 @@
             background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
             z-index: 10000; display: none; align-items: center; justify-content: center;
         }
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+        
         .modal-content {
             background: var(--bg-card); width: 90%; max-width: 800px; height: 80vh;
             border: 1px solid var(--primary); border-radius: 16px; position: relative;
@@ -903,13 +919,32 @@
         </main>
     </div>
 
-    <!-- Password Tool Modal -->
-    <div id="tool-modal-overlay">
-        <div class="modal-content">
-            <button id="closeModalBtn" class="modal-close-btn"><i class="fas fa-times"></i></button>
-            <div class="modal-iframe-wrapper">
-<iframe id="toolIframe" data-src="/app/pass-strength-shield.html" title="Password Strength Shield"></iframe>         </div>
+
+
+
+
+
+    
+
+<!-- Password Tool Modal -->
+<div id="tool-modal-overlay" class="modal-overlay">
+    <div class="modal-content">
+        <button id="closeModalBtn" class="modal-close-btn"><i class="fas fa-times"></i></button>
+        <div class="modal-iframe-wrapper">
+            <iframe id="toolIframe" data-src="pass-strength-shield.html" title="Password Strength Shield"></iframe>
+        </div>
     </div>
+</div>
+
+
+
+
+
+
+
+
+
+        
 
     <!-- App Logic Scripts -->
     <script>
@@ -1219,19 +1254,59 @@
             }
         }
 
-        // Modal Logic (global listener)
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'openToolBtn') {
-                const modal = document.getElementById('tool-modal-overlay');
-                const iframe = document.getElementById('toolIframe');
-                if(!iframe.src) iframe.src = iframe.getAttribute('data-src');
-                modal.style.display = 'flex';
-            }
-            if (e.target && (e.target.id === 'closeModalBtn' || e.target.closest('#closeModalBtn'))) {
-                document.getElementById('tool-modal-overlay').style.display = 'none';
-            }
-        });
 
+
+
+        
+ // ==========================================
+// MODAL LOGIC FOR PASSWORD TOOL
+// ==========================================
+// Global click handler for open button (works with dynamically loaded content)
+document.addEventListener('click', function(e) {
+    const openBtn = e.target.closest('#openToolBtn');
+    if (openBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const modal = document.getElementById('tool-modal-overlay');
+        const iframe = document.getElementById('toolIframe');
+        
+        if (!modal || !iframe) return;
+        
+        // Set the iframe source
+        if (!iframe.src || iframe.src === window.location.href) {
+            iframe.src = iframe.getAttribute('data-src') || 'pass-strength-shield.html';
+        }
+        
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+});
+
+// Close modal handlers
+document.addEventListener('click', function(e) {
+    // Close button
+    if (e.target.closest('#closeModalBtn')) {
+        const modal = document.getElementById('tool-modal-overlay');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+    
+    // Click outside modal content
+    if (e.target.classList.contains('modal-overlay')) {
+        const modal = document.getElementById('tool-modal-overlay');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    }
+});
+
+
+
+        
         // Initialize default video overlay (for initial content)
         (function initLocalVideoOverlay() {
             const vidOverlay = document.getElementById('video-overlay');
