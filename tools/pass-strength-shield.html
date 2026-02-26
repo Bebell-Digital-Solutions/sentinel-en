@@ -352,6 +352,47 @@
 
 
 
+        /* --- Background Animations --- */
+/* CSS: Layering and Keyframes */
+    #background-effects-layer { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        z-index: -1; pointer-events: none; background: #0d0d0d; 
+    }
+    #matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; }
+    .grid-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background-image: linear-gradient(#ff5011 1px, transparent 1px), linear-gradient(90deg, #ff5011 1px, transparent 1px);
+        background-size: 50px 50px; opacity: 0.05; animation: gridMove 20s linear infinite;
+    }
+    .scan-line {
+        position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+        background: linear-gradient(135deg, #ff5011 0%, #ff7a33 100%); 
+        box-shadow: 0 0 20px #ff5011; animation: scanDown 3s linear infinite;
+    }
+    .hack-particle {
+        position: absolute; color: #ff5011; font-family: monospace; font-size: 1rem;
+        opacity: 0.6; animation: floatParticle 8s infinite ease-in-out;
+    }
+    @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+    @keyframes scanDown { 0% { top: -2px; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    @keyframes floatParticle {
+        0%, 100% { transform: translateY(100vh) translateX(0); opacity: 0; }
+        50% { transform: translateY(-100px) translateX(100px); opacity: 1; }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
     /* ================= LOADER STYLES ================= */
     #sentinel-loader-layer {
         position: fixed; 
@@ -759,6 +800,67 @@
     </script>
 
 
+
+
+
+
+<script>
+(function() {
+    // 1. INJECT HTML ELEMENTS
+    const bgLayer = document.createElement('div');
+    bgLayer.id = 'background-effects-layer';
+    bgLayer.innerHTML = `
+        <canvas id="matrixCanvas"></canvas>
+        <div class="grid-overlay"></div>
+        <div class="scan-line"></div>
+        <div id="hackParticlesContainer"></div>
+    `;
+    document.body.prepend(bgLayer);
+
+    // 2. MATRIX ANIMATION
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+    const drops = Array(Math.floor(canvas.width / 14)).fill(1);
+
+    function draw() {
+        ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#ff5011';
+        ctx.font = '14px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            ctx.fillText(chars[Math.floor(Math.random() * chars.length)], i * 14, drops[i] * 14);
+            if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+    }
+    setInterval(draw, 35);
+
+    // 3. PARTICLE GENERATION
+    const pContainer = document.getElementById('hackParticlesContainer');
+    const symbols = ['0', '1', '{', '}', '>', '/'];
+    for(let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'hack-particle';
+        p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        pContainer.appendChild(p);
+    }
+})();
+</script>
+
+
+
+    
 
 
 
