@@ -268,36 +268,73 @@
 
 
 
-/* Mobile Menu Toggle Button - Hidden on Desktop by Default */
-#mobile-menu-toggle {
-    display: none; /* Hidden by default on all screens */
+/* Base Burger Menu Styles (Hidden on Desktop) */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 80, 17, 0.05);
+    border: 1px solid rgba(255, 80, 17, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    transition: all 0.25s ease;
     position: fixed;
     top: 15px;
     right: 15px;
-    z-index: 60;
-    background: var(--bg-card);
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    align-items: center;
-    justify-content: center;
-    transition: all var(--transition);
+    z-index: 1001;
 }
 
-#mobile-menu-toggle:hover {
+/* Hover Glow Effect */
+.menu-toggle::before {
+    content: '';
+    position: absolute;
+    inset: 0;
     background: rgba(255, 80, 17, 0.1);
-    transform: scale(1.05);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    border-radius: 8px;
+    z-index: -1;
 }
 
-#mobile-menu-toggle i {
-    font-size: 1.5rem;
+.menu-toggle:hover::before {
+    opacity: 1;
 }
 
+.menu-toggle:hover {
+    border-color: var(--primary);
+}
+
+/* The 3 Lines */
+.menu-toggle span {
+    width: 20px;
+    height: 2px;
+    background: var(--primary);
+    transition: all 0.3s ease;
+    border-radius: 1px;
+    position: relative;
+}
+
+/* Active State: Transforms the lines into an "X" */
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+}
+
+
+        
 
         /* Responsive Mobile Drawer Logic */
         @media (max-width: 1024px) {
@@ -312,10 +349,27 @@
             }
             .sidebar.open ~ #sidebar-overlay { display: block; }
         }
+
+
+
+        
+/* Scale down slightly on very small phones */
+@media (max-width: 480px) {
+    .menu-toggle {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+        
     </style>
 </head>
 <body>
 
+   
+
+    
+    
     <!-- ================= LOADER LAYER ================= -->
     <div id="loader-screen-layer">
         <div style="display:flex; flex-direction: column; align-items: center; width: 100%; px: 20px;">
@@ -326,6 +380,8 @@
                     </div>
                     <div class="terminal-title">SENTINEL DASHBOARD INITIALIZATION</div>
                 </div>
+
+                
                 <div class="loader-terminal-body">
                     <div class="terminal-line"><span style="color:var(--primary)">root@sentinel:~$</span> ./load_playbook.sh</div>
                     <div class="terminal-line">[INFO] Initializing Privacy Dashboard...</div>
@@ -335,6 +391,7 @@
                     <div class="terminal-line"><span style="color:var(--primary)">root@sentinel:~$</span> <span style="animation: blink 1s infinite">_</span></div>
                 </div>
             </div>
+            
             <div class="loader-progress-container">
                 <div class="loader-progress-bar" id="loaderProgress"></div>
             </div>
@@ -342,6 +399,9 @@
         </div>
     </div>
 
+
+
+    
     <!-- ================= BACKGROUND LAYER ================= -->
     <div id="background-effects-layer">
         <canvas id="matrixCanvas"></canvas>
@@ -350,10 +410,13 @@
         <div id="hackParticles"></div>
     </div>
 
-    <!-- Mobile Hamburger Button -->
-    <button id="mobile-menu-toggle">
-        <i class="fas fa-bars"></i>
-    </button>
+
+<!-- Mobile Hamburger Button -->
+<button class="menu-toggle" id="mobile-menu-toggle">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
 
     <!-- ================= APP LAYOUT WRAPPER ================= -->
     <div id="app-layout-wrapper">
@@ -675,16 +738,24 @@
             let touchStartX = 0;
             let touchEndX = 0;
 
-            // Hamburger Menu Click
-            toggleBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-            });
+            
 
-            // Tap outside to close
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-            });
+// Hamburger Menu Click with X transformation
+toggleBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    toggleBtn.classList.toggle('active'); // This transforms the burger into X
+});
 
+            
+
+// Close sidebar when clicking overlay
+overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    toggleBtn.classList.remove('active'); // Reset to burger when closed
+});
+
+
+            
             // Swipe Detection
             document.addEventListener('touchstart', e => {
                 touchStartX = e.changedTouches[0].screenX;
@@ -711,6 +782,10 @@
                 }
             }
         }
+
+
+
+        
 
         // ==========================================
         // LOADER & BACKGROUNDS
