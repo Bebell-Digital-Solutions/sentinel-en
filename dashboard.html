@@ -1,1 +1,757 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Privacy and Security Dashboard | Sentinel</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (for layout utilities) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Anime.js for Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" href="https://bucket.mlcdn.com/a/3336/3336910/images/d4281bdac0392a0f63d74a3f70de1e30c5f42bae.png">
+
+    <style>
+        :root {
+            /* Theme Variables */
+            --primary: #ff5011;
+            --secondary: hsl(210, 10%, 23%);
+            --bg-dark: #0d0d0d;
+            --bg-darker: #050505;
+            --bg-card: hsl(242, 14%, 12%);
+            --bg-hover: hsl(242, 14%, 16%);
+            
+            --text-main: hsl(242, 8%, 98%);
+            --text-muted: hsl(242, 8%, 70%);
+            --border: rgba(255, 80, 17, 0.2);
+            
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --danger: #ef4444;
+            
+            --gradient-1: linear-gradient(135deg, var(--primary) 0%, #ff7a33 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255, 80, 17, 0.05) 0%, rgba(255, 122, 51, 0.02) 100%);
+            
+            --shadow-glow: 0 0 30px rgba(255, 80, 17, 0.25);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --font-primary: 'Inter', sans-serif;
+            --font-code: 'Fira Code', monospace;
+            --font-tech: 'Orbitron', monospace;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-dark);
+            color: var(--text-muted);
+            line-height: 1.7;
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Utility classes to map user's exact classes to CSS variables */
+        .text-text-main { color: var(--text-main); }
+        .text-text-muted { color: var(--text-muted); }
+
+        /* =========================================
+           BACKGROUND EFFECTS
+           ========================================= */
+        #background-effects-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        #matrixCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.15; }
+        .grid-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--primary) 1px, transparent 1px), linear-gradient(90deg, var(--primary) 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.05; animation: gridMove 20s linear infinite;
+        }
+        .scan-line {
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: var(--gradient-1); box-shadow: 0 0 20px var(--primary); animation: scanDown 3s linear infinite;
+        }
+        #hackParticles { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+        .particle {
+            position: absolute; width: 4px; height: 4px; background: var(--primary);
+            border-radius: 50%; opacity: 0.6; font-family: var(--font-code); font-size: 1rem;
+            color: var(--primary); display: flex; align-items: center; justify-content: center;
+            animation: floatParticle 8s infinite ease-in-out;
+        }
+        @keyframes gridMove { 0% { transform: translate(0, 0); } 100% { transform: translate(50px, 50px); } }
+        @keyframes scanDown { 0% { top: -2px; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10%, 90% { opacity: 0.6; }
+            50% { transform: translateY(-100px) translateX(100px); opacity: 1; }
+        }
+
+        /* =========================================
+           LOADER
+           ========================================= */
+        #loader-screen-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(ellipse at center, rgba(255, 80, 17, 0.05) 0%, var(--bg-darker) 70%);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 10000; transition: opacity 0.6s ease, visibility 0.6s;
+        }
+        #loader-screen-layer.hidden { opacity: 0; visibility: hidden; }
+        .loader-terminal {
+            background: rgba(0,0,0,0.6); border: 2px solid var(--primary); border-radius: 16px;
+            box-shadow: var(--shadow-glow); backdrop-filter: blur(20px); width: 100%; max-width: 600px;
+            overflow: hidden; margin-bottom: 2rem;
+        }
+        .loader-terminal-header {
+            background: rgba(255, 80, 17, 0.1); padding: 1rem; display: flex; align-items: center; gap: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        .terminal-dots span { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 4px; }
+        .dot-red { background: var(--danger); } .dot-yellow { background: var(--warning); } .dot-green { background: var(--success); }
+        .terminal-title { color: var(--text-main); font-family: var(--font-code); font-size: 0.85rem; font-weight: 600; letter-spacing: 1px;}
+        .loader-terminal-body { padding: 2rem; font-family: var(--font-code); font-size: 0.95rem; min-height: 250px; }
+        .terminal-line { opacity: 0; margin-bottom: 0.5rem; animation: fadeInTerminal 0.5s ease forwards; }
+        @keyframes fadeInTerminal { to { opacity: 1; } }
+        .terminal-line:nth-child(1) { animation-delay: 0.2s; } .terminal-line:nth-child(2) { animation-delay: 0.4s; }
+        .terminal-line:nth-child(3) { animation-delay: 0.6s; } .terminal-line:nth-child(4) { animation-delay: 0.8s; }
+        .terminal-line:nth-child(5) { animation-delay: 1s; } .terminal-line:nth-child(6) { animation-delay: 1.2s; }
+        .loader-progress-container { width: 100%; max-width: 600px; height: 6px; background: rgba(255, 80, 17, 0.1); border-radius: 10px; border: 1px solid var(--border); }
+        .loader-progress-bar { height: 100%; background: var(--gradient-1); width: 0%; box-shadow: 0 0 20px var(--primary); transition: width 0.3s ease; border-radius: 10px; }
+        .loader-percentage { text-align: center; color: var(--primary); font-family: var(--font-code); font-size: 1rem; margin-top: 10px; font-weight: 600;}
+
+        /* =========================================
+           LAYOUT: LEFT SIDEBAR & MAIN CONTENT
+           ========================================= */
+        #app-layout-wrapper {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row; /* Sidebar on the left */
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(13, 13, 13, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 50;
+            /* Reduced padding width to fit text on single lines safely */
+            padding: 1.5rem 0.5rem; 
+            box-shadow: 5px 0 30px rgba(0,0,0,0.5);
+            transition: transform var(--transition);
+        }
+
+        .sidebar::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(255,80,17,0.3); border-radius: 10px; }
+
+        .main-content {
+            flex-grow: 1;
+            margin-left: 280px; /* Offset for left sidebar */
+            padding: 2rem 3rem;
+            max-width: 1200px;
+            margin-right: auto;
+            transition: margin-left var(--transition);
+        }
+
+        /* Sidebar Navigation Items */
+        .nav-list { list-style: none; padding: 0; margin-top: 1rem;}
+        .nav-item {
+            display: flex; align-items: center; 
+            /* Reduced padding to fit longer strings */
+            padding: 0.8rem 0.75rem;
+            margin-bottom: 0.5rem; border-radius: 8px; cursor: pointer;
+            color: var(--text-muted); font-family: var(--font-code);
+            font-size: 0.9rem; transition: all var(--transition);
+            border: 1px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: var(--primary);
+            background: rgba(255, 80, 17, 0.08);
+            border-color: rgba(255, 80, 17, 0.2);
+            box-shadow: inset 0 0 15px rgba(255, 80, 17, 0.05);
+        }
+        .nav-item .nav-icon { color: inherit; transition: all var(--transition); }
+
+        /* Typography */
+        h1, h2, h3, h4 { color: var(--text-main); font-family: var(--font-tech); letter-spacing: 0.5px; }
+        h2 { font-size: 2rem; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(255, 80, 17, 0.2));}
+        
+        /* Cards */
+        .card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 20px rgba(255, 80, 17, 0.05);
+            backdrop-filter: blur(10px); margin-bottom: 2rem;
+            animation: fadeInSection 0.4s ease-out;
+        }
+        @keyframes fadeInSection { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Checkboxes Customization */
+        input[type="checkbox"] {
+            appearance: none; -webkit-appearance: none;
+            width: 22px; height: 22px; min-width: 22px;
+            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,80,17,0.5);
+            border-radius: 6px; cursor: pointer; position: relative;
+            transition: all var(--transition); display: inline-flex; align-items: center; justify-content: center;
+        }
+        input[type="checkbox"]:hover:not([disabled]) { border-color: var(--primary); box-shadow: 0 0 10px rgba(255,80,17,0.3); }
+        input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 15px rgba(255,80,17,0.5); }
+        input[type="checkbox"]:checked::after {
+            content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900;
+            color: var(--bg-dark); font-size: 12px;
+        }
+        input[type="checkbox"]:disabled { border-color: #333; cursor: not-allowed; }
+        input[type="checkbox"]:disabled:checked { background: #333; color: #111;}
+        input[type="checkbox"]:disabled:checked::after { color: #111; }
+
+        /* Banner & Buttons */
+        .btn-primary-tool {
+            background: var(--primary); color: var(--bg-dark); border: none;
+            padding: 0.8rem 1.5rem; font-family: var(--font-code); font-weight: 700;
+            border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: all var(--transition); text-transform: uppercase; font-size: 0.9rem;
+        }
+        .btn-primary-tool:hover { box-shadow: var(--shadow-glow); transform: scale(1.02); color: white;}
+
+        /* Modal Overlay */
+        #tool-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            z-index: 10000; display: none; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg-card); width: 90%; max-width: 800px; height: 80vh;
+            border: 1px solid var(--primary); border-radius: 16px; position: relative;
+            box-shadow: var(--shadow-glow); overflow: hidden; display: flex; flex-direction: column;
+        }
+        .modal-close-btn {
+            position: absolute; top: 15px; right: 15px; background: none; border: none;
+            color: var(--text-main); font-size: 1.5rem; cursor: pointer; z-index: 10;
+        }
+        .modal-close-btn:hover { color: var(--primary); }
+
+        /* Mobile Menu Toggle Button */
+        #mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            right: 15px; /* Switched to right side */
+            z-index: 60;
+            background: var(--bg-card);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Responsive Mobile Drawer Logic */
+        @media (max-width: 1024px) {
+            #mobile-menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); width: 280px; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 4rem 1.5rem 1.5rem; }
+            
+            #sidebar-overlay {
+                display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); z-index: 40;
+            }
+            .sidebar.open ~ #sidebar-overlay { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= LOADER LAYER ================= -->
+    <div id="loader-screen-layer">
+        <div style="display:flex; flex-direction: column; align-items: center; width: 100%; px: 20px;">
+            <div class="loader-terminal">
+                <div class="loader-terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
+                    </div>
+                    <div class="terminal-title">SENTINEL DASHBOARD INITIALIZATION</div>
+                </div>
+                <div class="loader-terminal-body">
+                    <div class="terminal-line"><span style="color:var(--primary)">root@sentinel:~$</span> ./load_playbook.sh</div>
+                    <div class="terminal-line">[INFO] Initializing Privacy Dashboard...</div>
+                    <div class="terminal-line">[INFO] Loading Core Modules: <span style="color:var(--success)">SUCCESS</span></div>
+                    <div class="terminal-line">[INFO] Establishing Secure Connection...</div>
+                    <div class="terminal-line" style="color:var(--success)">[SUCCESS] Environment Ready.</div>
+                    <div class="terminal-line"><span style="color:var(--primary)">root@sentinel:~$</span> <span style="animation: blink 1s infinite">_</span></div>
+                </div>
+            </div>
+            <div class="loader-progress-container">
+                <div class="loader-progress-bar" id="loaderProgress"></div>
+            </div>
+            <div class="loader-percentage" id="loaderPercent">0%</div>
+        </div>
+    </div>
+
+    <!-- ================= BACKGROUND LAYER ================= -->
+    <div id="background-effects-layer">
+        <canvas id="matrixCanvas"></canvas>
+        <div class="grid-overlay"></div>
+        <div class="scan-line"></div>
+        <div id="hackParticles"></div>
+    </div>
+
+    <!-- Mobile Hamburger Button -->
+    <button id="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- ================= APP LAYOUT WRAPPER ================= -->
+    <div id="app-layout-wrapper">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="sidebar-navigation">
+            <div class="flex flex-col h-full">
+                <!-- Logo & Title -->
+                <div class="mb-2 text-center">
+                    <div class="relative w-24 h-24 mx-auto mb-4 mt-6">
+                        <img src="https://bucket.mlcdn.com/a/3336/3336910/images/d4281bdac0392a0f63d74a3f70de1e30c5f42bae.png" alt="Dashboard Logo" class="w-full h-full object-contain relative z-10" style="filter: drop-shadow(0 0 10px rgba(255,80,17,0.5));">
+                    </div>
+                    <h1 class="text-2xl font-extrabold text-text-main tracking-wide">SENTINEL</h1>
+                    <p class="text-sm text-text-muted">Your Guided Playbook</p>
+                </div>
+                
+                <!-- Navigation Links -->
+                <nav class="flex-grow">
+                    <ul class="nav-list">
+                        <li class="nav-item active" data-section="overview" tabindex="0">
+                            <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 nav-icon"></i> Overview
+                        </li>
+                        <li class="nav-item" data-section="email-identity" tabindex="0">
+                            <i data-lucide="at-sign" class="w-5 h-5 mr-3 nav-icon"></i> Email as Identity
+                        </li>
+                        <li class="nav-item" data-section="password-strategy" tabindex="0">
+                            <i data-lucide="key-round" class="w-5 h-5 mr-3 nav-icon"></i> Password Strategy
+                        </li>
+                        <li class="nav-item" data-section="two-factor-protection" tabindex="0">
+                            <i data-lucide="shield-check" class="w-5 h-5 mr-3 nav-icon"></i> Two Factor Protection
+                        </li>
+                        <li class="nav-item" data-section="scam-fraud-awareness" tabindex="0">
+                            <i data-lucide="triangle-alert" class="w-5 h-5 mr-3 nav-icon"></i> Scam & Fraud
+                        </li>
+                        <li class="nav-item" data-section="inbox-account-cleanup" tabindex="0">
+                            <i data-lucide="trash-2" class="w-5 h-5 mr-3 nav-icon"></i> Inbox Cleanup
+                        </li>
+                        <li class="nav-item" data-section="breach-detection" tabindex="0">
+                            <i data-lucide="scan-eye" class="w-5 h-5 mr-3 nav-icon"></i> Breach Detection
+                        </li>
+                        <li class="nav-item" data-section="tracking-cookies-ads" tabindex="0">
+                            <i data-lucide="cookie" class="w-5 h-5 mr-3 nav-icon"></i> Tracking & Ads
+                        </li>
+                        <li class="nav-item" data-section="reports-resources" tabindex="0">
+                            <i data-lucide="file-text" class="w-5 h-5 mr-3 nav-icon"></i> Reports & Resources
+                        </li>
+                        
+                        <!-- New Demo Tool Buttons -->
+                        <li class="nav-item" data-section="demo-tool-1" tabindex="0">
+                            <i data-lucide="bot" class="w-5 h-5 mr-3 nav-icon"></i> Privacy Coach
+                        </li>
+                        
+                        <li class="nav-item" data-section="demo-tool-2" tabindex="0">
+                            <i data-lucide="download" class="w-5 h-5 mr-3 nav-icon"></i> Download Guide
+                        </li>                  
+                    </ul>
+                </nav>
+
+                <!-- Sidebar Footer Version Tracker -->
+                <div class="mt-auto pt-6 pb-4 text-xs text-center text-[var(--text-muted)] border-t border-[var(--border)]">
+                    <div class="font-[var(--font-code)] text-[var(--primary)] font-bold tracking-wider">
+                        <span class="opacity-70">&gt;_</span> SYS.v1.0.0
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Invisible overlay to close sidebar on mobile tap -->
+        <div id="sidebar-overlay"></div>
+
+        <!-- Right Column: Scrollable Content -->
+        <main class="main-content relative z-10" id="main-content-area">
+            
+            <!-- Global Progress Bar Header -->
+            <header id="progress-bar-header" class="mb-8 p-6 bg-[rgba(13,13,13,0.7)] backdrop-blur-md rounded-2xl border border-[var(--border)] shadow-lg shadow-[rgba(0,0,0,0.5)]">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-bold text-[var(--text-main)]" style="font-family: var(--font-tech); text-transform:uppercase;">Protocol Progress</h3>
+                    <p class="text-sm font-[var(--font-code)] text-[var(--primary)]" id="progressText">0% Secure</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute -left-2 -top-2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[var(--primary)] shadow-[0_0_10px_var(--primary)]">
+                        <i data-lucide="lock-open" class="w-4 h-4 text-[var(--primary)]"></i>
+                    </div>
+                    <div class="w-full h-4 bg-black rounded-full overflow-hidden border border-[#333]">
+                        <div class="h-full bg-[var(--gradient-1)] rounded-full transition-all duration-500 shadow-[0_0_15px_var(--primary)]" style="width: 0%;" id="mainProgressBar"></div>
+                    </div>
+                    <div class="absolute -right-2 -top-2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-[var(--bg-dark)] border border-[#333] cursor-help transition-all" id="lockEnd">
+                        <i data-lucide="lock" class="w-4 h-4 text-gray-500" id="lockIcon"></i>
+                    </div>
+                </div>
+            </header>
+
+            <!-- DYNAMIC FETCH CONTAINER -->
+            <div id="dynamic-page-content">
+                <!-- Default Content before Fetch executes -->
+                <div class="card">
+                    <h2>Overview</h2>
+                    <p class="text-lg mb-6">Understand the journey ahead to secure your digital life and private information.</p>
+                    
+                    <div class="w-full aspect-video bg-black rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.8)] border border-[var(--border)] mb-8 overflow-hidden relative">
+                        <div id="video-overlay" class="absolute inset-0 w-full h-full flex items-center justify-center cursor-pointer bg-cover bg-center z-10 group" style="background-image: url('https://cdn.shopify.com/s/files/1/0242/0175/6777/files/AIM-Thumbnails_1.gif?v=1768770938');">
+                            <div class="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-all"></div>
+                            
+                            <!-- Orange Circle with White Rounded Play Arrow -->
+                            <div class="relative z-20 hover:scale-110 transition-transform duration-300 w-20 h-20 bg-[var(--primary)] rounded-full flex items-center justify-center shadow-[var(--shadow-glow)]">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white ml-1.5" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            
+                            <div class="absolute bottom-6 left-6 z-20 text-white font-[var(--font-tech)]">
+                                <h4 class="text-2xl font-bold tracking-wide">Security Protocol Initialization</h4>
+                            </div>
+                        </div>
+                        <video id="overview-video" controls class="w-full h-full object-cover hidden">
+                            <source src="https://cdn.shopify.com/videos/c/o/v/a9fe271f1ea34fb68198e50a30f2a1c9.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <h3 class="text-xl mb-3 border-l-2 border-[var(--primary)] pl-3">Protocol Definition</h3>
+                    <p class="mb-6 text-[var(--text-main)]">A guided playbook that helps you implement practical security measures through clear instructions and confirmed actions.</p>
+
+                    <h3 class="text-xl mb-4 border-l-2 border-[var(--primary)] pl-3 font-[var(--font-code)]">Initialization Checklist</h3>
+                    <ul class="list-none p-0 space-y-4 mb-8">
+                        <li class="flex items-start gap-3">
+                            <input type="checkbox" class="task-checkbox" id="overview-action1">
+                            <label for="overview-action1" class="text-[var(--text-muted)] mt-1">Read the protocol definitions and risk assessments.</label>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <input type="checkbox" class="task-checkbox" id="overview-action2">
+                            <label for="overview-action2" class="text-[var(--text-muted)] mt-1">Familiarize yourself with the Sentinel dashboard navigation.</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- End Dynamic Container -->
+
+            <!-- Main Content Footer -->
+            <footer class="mt-12 pt-8 pb-4 text-xs text-center text-text-muted border-t border-[var(--border)] font-[var(--font-code)]">
+                <p>Developed by <span class="text-[var(--primary)] font-semibold block mt-1">Bebell Digital Solutions</span></p>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- Password Tool Modal -->
+    <div id="tool-modal-overlay">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="modal-close-btn"><i class="fas fa-times"></i></button>
+            <div class="modal-iframe-wrapper">
+                <iframe id="toolIframe" data-src="https://bebell-digital-solutions.github.io/security-dashboard/tools/pass-strength-shield" title="Password Strength Shield"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Logic Scripts -->
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        // Set this to the total number of checkboxes across ALL your individual HTML files combined.
+        const TOTAL_PROTOCOL_TASKS = 21; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            initLoader();
+            initBackgrounds();
+            initMobileSidebar();
+            bindCheckboxes(); // bind for the default overview load
+            updateGlobalProgress(); // Calculate initial progress from memory
+            
+            // Map Data-Section Navigation Events
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const section = this.getAttribute('data-section');
+                    if (section) {
+                        loadContent(section + '.html', this);
+                    }
+                });
+            });
+        });
+
+        // ==========================================
+        // DYNAMIC FETCH ROUTER
+        // ==========================================
+        async function loadContent(pagePath, navElement) {
+            // Update active state in Sidebar
+            if (navElement) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                navElement.classList.add('active');
+            }
+
+            const container = document.getElementById('dynamic-page-content');
+            
+            try {
+                // Show loading spinner inside container while fetching
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <i class="fas fa-circle-notch fa-spin fa-3x text-[var(--primary)] mb-4"></i>
+                        <p class="text-[var(--font-code)] text-[var(--text-muted)]">Fetching module data...</p>
+                    </div>`;
+                
+                const response = await fetch(pagePath);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const html = await response.text();
+                
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const content = doc.querySelector('main') || doc.querySelector('.dashboard-section') || doc.body;
+                
+                container.innerHTML = content.innerHTML;
+                
+                Array.from(container.getElementsByTagName('script')).forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.textContent = oldScript.textContent;
+                    document.body.appendChild(newScript);
+                });
+
+                // Re-bind Checkboxes & Icons in the newly loaded DOM
+                lucide.createIcons();
+                bindCheckboxes(); // This will also restore checked states from memory
+                initLocalVideoOverlay(); 
+
+                // Automatically close the sidebar on mobile after a selection
+                document.getElementById('sidebar-navigation').classList.remove('open');
+
+            } catch (error) {
+                console.error('Error loading page module:', error);
+                container.innerHTML = `
+                    <div class="card border-2 border-[var(--danger)]">
+                        <h2 class="text-[var(--danger)] mb-2"><i class="fas fa-exclamation-triangle"></i> Module Offline</h2>
+                        <p class="mb-4">Failed to load the requested module: <code>${pagePath}</code></p>
+                        <p class="text-sm text-gray-500 bg-black p-4 rounded font-[var(--font-code)]">Error: ${error.message}</p>
+                        <p class="text-sm text-[var(--primary)] mt-4">Note: If you are running this locally directly from your file system (file://), your browser may block the fetch request for security reasons. Use a local server to test the dynamic loading.</p>
+                    </div>`;
+            }
+        }
+
+        // ==========================================
+        // GLOBAL PROGRESS BAR & MEMORY LOGIC
+        // ==========================================
+        function bindCheckboxes() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            checkboxes.forEach(cb => {
+                // 1. Restore state from memory when a new page loads
+                if (cb.id && localStorage.getItem('sentinel_task_' + cb.id) === 'true') {
+                    cb.checked = true;
+                }
+
+                // 2. Bind change event
+                cb.removeEventListener('change', handleCheckboxChange);
+                cb.addEventListener('change', handleCheckboxChange);
+            });
+        }
+
+        function handleCheckboxChange(e) {
+            // Save to local storage using the element's ID
+            if (e.target.id) {
+                localStorage.setItem('sentinel_task_' + e.target.id, e.target.checked);
+            } else {
+                console.warn("Warning: A checkbox is missing an ID. Progress cannot be saved.");
+            }
+            updateGlobalProgress();
+        }
+
+        function updateGlobalProgress() {
+            const mainProgressBar = document.getElementById('mainProgressBar');
+            const progressText = document.getElementById('progressText');
+            const lockIcon = document.getElementById('lockIcon');
+            const lockEnd = document.getElementById('lockEnd');
+
+            // Calculate completed tasks by counting "true" values in localStorage
+            let completedTasks = 0;
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('sentinel_task_') && localStorage.getItem(key) === 'true') {
+                    completedTasks++;
+                }
+            }
+
+            // Calculate global percentage
+            let percentage = (completedTasks / TOTAL_PROTOCOL_TASKS) * 100;
+            if (percentage > 100) percentage = 100; // Cap at 100%
+
+            mainProgressBar.style.width = percentage + '%';
+            progressText.innerText = `${Math.floor(percentage)}% Secure`;
+
+            if (percentage >= 100) {
+                lockIcon.setAttribute('data-lucide', 'shield-check');
+                lockIcon.classList.remove('text-gray-500');
+                lockIcon.classList.add('text-[var(--success)]');
+                lockEnd.classList.add('border-[var(--success)]', 'shadow-[0_0_15px_var(--success)]');
+            } else {
+                lockIcon.setAttribute('data-lucide', 'lock');
+                lockIcon.classList.remove('text-[var(--success)]');
+                lockIcon.classList.add('text-gray-500');
+                lockEnd.classList.remove('border-[var(--success)]', 'shadow-[0_0_15px_var(--success)]');
+            }
+            
+            // Safe fallback if lucide isn't defined yet
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ==========================================
+        // MOBILE SIDEBAR (SWIPE & TOGGLE)
+        // ==========================================
+        function initMobileSidebar() {
+            const sidebar = document.getElementById('sidebar-navigation');
+            const toggleBtn = document.getElementById('mobile-menu-toggle');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            // Hamburger Menu Click
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            // Tap outside to close
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+
+            // Swipe Detection
+            document.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            document.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipeGesture();
+            }, {passive: true});
+
+            function handleSwipeGesture() {
+                // Ignore small swipes or vertical scrolls
+                if (Math.abs(touchEndX - touchStartX) < 60) return;
+                
+                if (touchEndX - touchStartX > 60) {
+                    // Swipe Right -> Open (if swiping from left edge roughly)
+                    if(touchStartX < 50) { 
+                        sidebar.classList.add('open');
+                    }
+                }
+                if (touchStartX - touchEndX > 60) {
+                    // Swipe Left -> Close
+                    sidebar.classList.remove('open');
+                }
+            }
+        }
+
+        // ==========================================
+        // LOADER & BACKGROUNDS
+        // ==========================================
+        function initLoader() {
+            const loader = document.getElementById('loader-screen-layer');
+            const progress = document.getElementById('loaderProgress');
+            const percent = document.getElementById('loaderPercent');
+            let loadValue = 0;
+            const loadInterval = setInterval(() => {
+                loadValue += Math.random() * 15 + 5;
+                if (loadValue >= 100) {
+                    loadValue = 100;
+                    clearInterval(loadInterval);
+                    setTimeout(() => {
+                        if (typeof anime !== 'undefined') {
+                            anime({ targets: loader, opacity: 0, duration: 600, easing: 'easeInOutQuad', complete: () => loader.classList.add('hidden') });
+                        } else {
+                            loader.classList.add('hidden');
+                        }
+                    }, 500);
+                }
+                progress.style.width = loadValue + '%';
+                percent.innerText = Math.floor(loadValue) + '%';
+            }, 100);
+        }
+
+        function initBackgrounds() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            const drops = Array(Math.floor(canvas.width/14)).fill(1);
+            setInterval(() => {
+                ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff5011'; ctx.font = '14px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*14, drops[i]*14);
+                    if (drops[i]*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }, 35);
+
+            const pContainer = document.getElementById('hackParticles');
+            for(let i=0; i<15; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle'; p.textContent = ['0','1','{','}','>','/'][Math.floor(Math.random()*6)];
+                p.style.left = Math.random()*100+'%'; p.style.animationDelay = Math.random()*5+'s';
+                pContainer.appendChild(p);
+            }
+        }
+
+        // Helper to re-bind video click if loaded dynamically
+        function initLocalVideoOverlay() {
+            const vidOverlay = document.getElementById('video-overlay');
+            const video = document.getElementById('overview-video');
+            if(vidOverlay && video) {
+                vidOverlay.addEventListener('click', () => {
+                    vidOverlay.style.display = 'none';
+                    video.classList.remove('hidden');
+                    video.play();
+                });
+            }
+        }
+        initLocalVideoOverlay(); // Run once for default DOM
+
+        // Modal Logic Helper (Bind to document to handle dynamically loaded buttons)
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'openToolBtn') {
+                const modal = document.getElementById('tool-modal-overlay');
+                const iframe = document.getElementById('toolIframe');
+                if(!iframe.src) iframe.src = iframe.getAttribute('data-src');
+                modal.style.display = 'flex';
+            }
+            if (e.target && (e.target.id === 'closeModalBtn' || e.target.closest('#closeModalBtn'))) {
+                document.getElementById('tool-modal-overlay').style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
