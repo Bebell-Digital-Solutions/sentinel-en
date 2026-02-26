@@ -2457,8 +2457,13 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
         border-radius: 0;
     }
 
+    /* Adjusting Top Bar Edges */
+    .header-container {
+        padding: 0 10px; /* Reduced from 2.5rem */
+    }
+
     .nav {
-        padding: 0 1rem;
+        padding: 0; /* Reduced from 1rem */
     }
 
     /* Section Headers */
@@ -2474,7 +2479,7 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
 
     /* Footer Adjustment */
     .footer-content {
-        flex-direction: column-reverse;
+        flex-direction: column-reverse; /* Reverses order so social is on top */
         gap: 1.5rem;
         text-align: center;
     }
@@ -2499,8 +2504,12 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
     }
     
     .slide-card {
-        padding: 2rem 1rem;
+        padding: 2rem 0; /* Let wrapper handle side padding */
         min-height: auto;
+    }
+    
+    .slide-content-wrapper {
+        padding: 0 10px; /* Exact 10px breathing room */
     }
     
     .slide-title {
@@ -2589,9 +2598,17 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
         padding: 3rem 0;
     }
 
+    .slider-main-container {
+        padding: 0; /* Make it stretch more */
+    }
+
     .slide-card {
-        padding: 1.5rem 0.5rem;
+        padding: 1.5rem 0; 
         min-height: auto;
+    }
+
+    .slide-content-wrapper {
+        padding: 0 10px; /* Guarantee 10px padding */
     }
 
     .slide-title {
@@ -2611,7 +2628,7 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
     
     .slide-description {
         font-size: 0.85rem;
-        padding: 0 0.5rem;
+        padding: 0; /* remove extra padding */
     }
 
     .slide-metrics {
