@@ -16,7 +16,7 @@
   </p>
   
   <!-- DEMO VIDEO PLACEHOLDER -->
-  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID">
+  <a href="https://www.youtube.com/watch?v=bq-wfPyd_To">
     <img src="https://img.shields.io/badge/▶_WATCH_DEMO-ff5011?style=for-the-badge" alt="Watch Demo">
   </a>
   
@@ -90,7 +90,7 @@ If you find Sentinel useful, consider buying me a coffee to keep the servers run
 
 <div align="center">
   <p style="color: #737373;">
-    Made with 🛡️ by Sentinel Team<br>
+    Made with 🛡️ by Bebell Digital Solutions<br>
     © 2026 All rights reserved.
   </p>
 </div>
