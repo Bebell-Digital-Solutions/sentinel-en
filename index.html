@@ -631,6 +631,46 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
     flex-shrink: 0;
 }
 
+
+        /* Translation Icon Styling */
+        .translate-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 80, 17, 0.05);
+            color: var(--primary);
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .translate-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 80, 17, 0.1);
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            border-radius: 8px;
+            z-index: -1;
+        }
+
+        .translate-link:hover::before {
+            opacity: 1;
+        }
+
+        .translate-link:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255, 80, 17, 0.3);
+        }
+
+      
+
 .login-btn {
     background: rgba(255, 80, 17, 0.1);
     border: 1px solid var(--primary);
@@ -3202,6 +3242,15 @@ a, button, input[type="submit"], label, .nav-link, .social-link, .service-link, 
 
                 
                 <div class="nav-actions">
+
+
+         <!-- Translation icon – set your hyperlink here -->
+                    <a href="https://sentinel-es.projectfreedom.club" class="translate-link" id="translateIcon" title="Cambiar idioma / Switch language">
+                        <i class="fas fa-language"></i>
+                    </a>
+
+
+                    
                     <a href="https://privacy-security.productdyno.com/login" class="login-btn" id="loginBtn">
                         <i class="fas fa-user-circle"></i>
                         <span>Sign In</span>
